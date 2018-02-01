@@ -1,0 +1,16 @@
+insert into unidade_medidas(id_unidade_medida, simbolo_unidade_medida, descricao_unidade_medida) values (1, 'un', 'unidade');
+insert into unidade_medidas(id_unidade_medida, simbolo_unidade_medida, descricao_unidade_medida) values (2, 'kg', 'quilograma');
+insert into unidade_medidas(id_unidade_medida, simbolo_unidade_medida, descricao_unidade_medida) values (3, 'l', 'litro');
+insert into unidade_medidas(id_unidade_medida, simbolo_unidade_medida, descricao_unidade_medida) values (4, 'g', 'grama');
+insert into unidade_medidas(id_unidade_medida, simbolo_unidade_medida, descricao_unidade_medida) values (5, 'ml', 'mililitro');
+
+insert into categorias (id_categoria, descricao_categoria) values (1, 'categoria 1');
+insert into categorias (id_categoria, descricao_categoria) values (2, 'categoria 2');
+insert into categorias (id_categoria, descricao_categoria) values (3, 'categoria 3');
+
+insert into classificacaos (id_classificacao, descricao_classificacao) values (1, 'classificacao 1');
+insert into classificacaos (id_classificacao, descricao_classificacao) values (2, 'classificacao 2');
+insert into classificacaos (id_classificacao, descricao_classificacao) values (3, 'classificacao 3');
+
+insert into periodos (id_periodo_aula, descricao_periodo) values (1, 'Manhã');
+insert into periodos (id_periodo_aula, descricao_periodo) values (2, 'Noite');
