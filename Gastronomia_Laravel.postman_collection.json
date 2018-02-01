@@ -1,0 +1,361 @@
+{
+	"id": "be337da5-b712-491c-2228-d8d9a147e4e2",
+	"name": "Gastronomia_Laravel",
+	"description": "",
+	"order": [
+		"dd125a22-bdc8-a1be-323d-5c9febedbd0e",
+		"221a1add-0644-8092-a38a-543fabdc7614",
+		"810f6351-0d78-5219-d3c7-8f418bdf1313",
+		"c7b31a71-5888-9951-8e0e-007bf6b80d5e",
+		"7709e3d0-6bef-287a-32ed-a08b4b87c12e",
+		"a318ad37-13ae-3a6e-f55c-28dc08f4ceb6",
+		"1eaed240-c6b4-c6dc-b13c-26b01666110e",
+		"26ef6833-7d37-fd95-3349-01886da8eef9"
+	],
+	"folders": [],
+	"folders_order": [],
+	"timestamp": 1516663799283,
+	"owner": "2550320",
+	"public": false,
+	"events": [],
+	"variables": [],
+	"auth": null,
+	"requests": [
+		{
+			"id": "1eaed240-c6b4-c6dc-b13c-26b01666110e",
+			"headers": "Content-Type: application/json\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "http://localhost:8000/api/aulas/concluir/3",
+			"queryParams": [],
+			"events": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "cc83690c-23f9-4422-a15b-dbf1780db47a",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			],
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "PUT",
+			"data": [],
+			"dataMode": "raw",
+			"auth": null,
+			"time": 1517422844782,
+			"name": "Aula Concluir",
+			"description": "Post Receita",
+			"collectionId": "be337da5-b712-491c-2228-d8d9a147e4e2",
+			"responses": [],
+			"preRequestScript": null,
+			"tests": null,
+			"currentHelper": null,
+			"helperAttributes": null,
+			"rawModeData": "{\r\n\t\"data_aula\": \"2018-02-28\",\r\n\t\"descricao_aula\": \"Monte de coisa inutil\",\r\n\t\"aula_agendada\": false,\r\n\t\"aula_concluida\": false,\r\n\t\"id_periodo_aula\": 1,\r\n\t\"nome_aula\": \"aula do caralho\"\r\n\r\n}"
+		},
+		{
+			"id": "221a1add-0644-8092-a38a-543fabdc7614",
+			"headers": "Content-Type: application/json\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "http://localhost:8000/api/ingredientes/soma/4",
+			"queryParams": [],
+			"events": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "cc83690c-23f9-4422-a15b-dbf1780db47a",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			],
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "PUT",
+			"data": [],
+			"dataMode": "raw",
+			"auth": null,
+			"time": 1516999552645,
+			"name": "Ingrediente +",
+			"description": "Post Ingrediente",
+			"collectionId": "be337da5-b712-491c-2228-d8d9a147e4e2",
+			"responses": [],
+			"preRequestScript": null,
+			"tests": null,
+			"currentHelper": null,
+			"helperAttributes": null,
+			"rawModeData": "{\n    \"nome_ingrediente\": \"BananaBananakkk\",\n    \"id_unidade_medida\": 2,\n    \"quantidade_calorica_ingrediente\": 10,\n    \"aproveitamento_ingrediente\": 90.5,\n    \"quantidade_estoque_ingrediente\": 50,\n    \"quantidade_reservada_ingrediente\": 0,\n    \"valor_ingrediente\": 22\n}"
+		},
+		{
+			"id": "26ef6833-7d37-fd95-3349-01886da8eef9",
+			"headers": "Content-Type: application/json\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "http://localhost:8000/api/motivo_retiradas/4",
+			"queryParams": [],
+			"events": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "cc83690c-23f9-4422-a15b-dbf1780db47a",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			],
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "GET",
+			"data": [],
+			"dataMode": "raw",
+			"auth": null,
+			"time": 1517005227783,
+			"name": "Motivo Retirada",
+			"description": "Post Receita",
+			"collectionId": "be337da5-b712-491c-2228-d8d9a147e4e2",
+			"responses": [],
+			"preRequestScript": null,
+			"tests": null,
+			"currentHelper": null,
+			"helperAttributes": null,
+			"rawModeData": "{\r\n\t\"data_aula\": \"2018-02-28\",\r\n\t\"descricao_aula\": \"Monte de coisa inutil\",\r\n\t\"aula_agendada\": false,\r\n\t\"aula_concluida\": false,\r\n\t\"id_periodo_aula\": 1,\r\n\t\"nome_aula\": \"aula do caralho\",\r\n\t\"receitas\": [{\r\n\t\t\t\"id_receita\": 1,\r\n\t\t\t\"quantidade_receita\": 22\r\n\t\t}\r\n\t]\r\n}"
+		},
+		{
+			"id": "7709e3d0-6bef-287a-32ed-a08b4b87c12e",
+			"headers": "Content-Type: application/json\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "http://localhost:8000/api/aulas/1",
+			"queryParams": [],
+			"events": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "cc83690c-23f9-4422-a15b-dbf1780db47a",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			],
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "PUT",
+			"data": [],
+			"dataMode": "raw",
+			"auth": null,
+			"time": 1516908125501,
+			"name": "Aula",
+			"description": "Post Receita",
+			"collectionId": "be337da5-b712-491c-2228-d8d9a147e4e2",
+			"responses": [],
+			"preRequestScript": null,
+			"tests": null,
+			"currentHelper": null,
+			"helperAttributes": null,
+			"rawModeData": "{\r\n\t\"data_aula\": \"2018-02-28\",\r\n\t\"descricao_aula\": \"Monte de coisa inutil\",\r\n\t\"aula_agendada\": false,\r\n\t\"aula_concluida\": false,\r\n\t\"id_periodo_aula\": 1,\r\n\t\"nome_aula\": \"aula do caralho\",\r\n\t\"receitas\": [{\r\n\t\t\t\"id_receita\": 1,\r\n\t\t\t\"quantidade_receita\": 22\r\n\t\t}\r\n\t]\r\n}"
+		},
+		{
+			"id": "810f6351-0d78-5219-d3c7-8f418bdf1313",
+			"headers": "Content-Type: application/json\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "http://localhost:8000/api/ingredientes/subtrai/4",
+			"queryParams": [],
+			"events": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "cc83690c-23f9-4422-a15b-dbf1780db47a",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			],
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "PUT",
+			"data": [],
+			"dataMode": "raw",
+			"auth": null,
+			"time": 1517003779756,
+			"name": "Ingrediente --",
+			"description": "Post Ingrediente",
+			"collectionId": "be337da5-b712-491c-2228-d8d9a147e4e2",
+			"responses": [],
+			"preRequestScript": null,
+			"tests": null,
+			"currentHelper": null,
+			"helperAttributes": null,
+			"rawModeData": "{\n    \"nome_ingrediente\": \"BananaBananakkk\",\n    \"id_unidade_medida\": 2,\n    \"quantidade_calorica_ingrediente\": 10,\n    \"aproveitamento_ingrediente\": 90.5,\n    \"quantidade_estoque_ingrediente\": 10,\n    \"quantidade_reservada_ingrediente\": 0,\n    \"valor_ingrediente\": 22,\n    \"motivo_retirada\":\"\"\n}"
+		},
+		{
+			"id": "a318ad37-13ae-3a6e-f55c-28dc08f4ceb6",
+			"headers": "Content-Type: application/json\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "http://localhost:8000/api/aulas/agendar/3",
+			"queryParams": [],
+			"events": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "cc83690c-23f9-4422-a15b-dbf1780db47a",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			],
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "PUT",
+			"data": [],
+			"dataMode": "raw",
+			"auth": null,
+			"time": 1517422848188,
+			"name": "Aula Agendar",
+			"description": "Post Receita",
+			"collectionId": "be337da5-b712-491c-2228-d8d9a147e4e2",
+			"responses": [],
+			"preRequestScript": null,
+			"tests": null,
+			"currentHelper": null,
+			"helperAttributes": null,
+			"rawModeData": "{\r\n\t\"data_aula\": \"2018-02-28\",\r\n\t\"descricao_aula\": \"Monte de coisa inutil\",\r\n\t\"aula_agendada\": false,\r\n\t\"aula_concluida\": false,\r\n\t\"id_periodo_aula\": 1,\r\n\t\"nome_aula\": \"aula do caralho\",\r\n\t\"receitas\": [{\r\n\t\t\t\"id_receita\": 1,\r\n\t\t\t\"quantidade_receita\": 22\r\n\t\t}\r\n\t]\r\n}"
+		},
+		{
+			"id": "c7b31a71-5888-9951-8e0e-007bf6b80d5e",
+			"headers": "Content-Type: application/json\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "http://localhost:8000/api/receitas/",
+			"queryParams": [],
+			"events": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "cc83690c-23f9-4422-a15b-dbf1780db47a",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			],
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "POST",
+			"data": [],
+			"dataMode": "raw",
+			"auth": null,
+			"time": 1516906951579,
+			"name": "Receita",
+			"description": "Post Receita",
+			"collectionId": "be337da5-b712-491c-2228-d8d9a147e4e2",
+			"responses": [],
+			"preRequestScript": null,
+			"tests": null,
+			"currentHelper": null,
+			"helperAttributes": null,
+			"rawModeData": "{\r\n\t\"nome_receita\": \"Abacaxi com cocos do caralho\",\r\n\t\"modo_preparo_receita\": \"Monte de coisa inutil\",\r\n\t\"id_classificacao\": 2,\r\n\t\"id_categoria\": 1,\r\n\t\"ingredientes\": [{\r\n\t\t\t\"id_ingrediente\": 2,\r\n\t\t\t\"quantidade_bruta_receita_ingrediente\": 8,\r\n\t\t\t\"custo_bruto_receita_ingrediente\": 2\r\n\t\t},\r\n\t\t{\r\n\t\t\t\"id_ingrediente\": 1,\r\n\t\t\t\"quantidade_bruta_receita_ingrediente\": 18,\r\n\t\t\t\"custo_bruto_receita_ingrediente\": 2\r\n\t\t}\r\n\t]\r\n}"
+		},
+		{
+			"id": "dd125a22-bdc8-a1be-323d-5c9febedbd0e",
+			"headers": "Content-Type: application/json\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "http://localhost:8000/api/ingredientes/",
+			"queryParams": [],
+			"events": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "cc83690c-23f9-4422-a15b-dbf1780db47a",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			],
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "POST",
+			"data": [],
+			"dataMode": "raw",
+			"auth": null,
+			"time": 1516985603066,
+			"name": "Ingrediente",
+			"description": "Post Ingrediente",
+			"collectionId": "be337da5-b712-491c-2228-d8d9a147e4e2",
+			"responses": [],
+			"preRequestScript": null,
+			"tests": null,
+			"currentHelper": null,
+			"helperAttributes": null,
+			"rawModeData": "{\n    \"nome_ingrediente\": \"BananaBanana\",\n    \"id_unidade_medida\": 2,\n    \"quantidade_calorica_ingrediente\": 10,\n    \"aproveitamento_ingrediente\": 90.5,\n    \"quantidade_estoque_ingrediente\": 10,\n    \"quantidade_reservada_ingrediente\": 0,\n    \"valor_ingrediente\": 20\n}"
+		}
+	]
+}

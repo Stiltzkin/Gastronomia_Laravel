@@ -40,7 +40,7 @@ class ConcluirAulaController extends CalculosAulaController
         $erros = $this->validacao($subtraidoEstoqueArray);
 
         # conclui a aula efetivamente
-        if (empty($errosIngredienteArray)) {
+        if (empty($errosIngredienteArray) && empty($erros)) {
             if ($aula) {
                 $aula->update($dados);
 
@@ -53,7 +53,7 @@ class ConcluirAulaController extends CalculosAulaController
                 return response()->json(['data' => 'Não foi possível concluir a aula.', 'status' => false]);
             }
         } else {
-            return response()->json(['erros_ingredientes' => $errosIngredienteArray, 'status' => false]);
+            return response()->json(['erros_ingredientes' => $errosIngredienteArray, 'erros_conclusao' => $erros, 'status' => false]);
         }
     }
 
@@ -66,11 +66,9 @@ class ConcluirAulaController extends CalculosAulaController
                 array_push($erros, "A quantidade de estoque não pode ficar negativo.");
             }
             if ($subtraidoEstoqueArray[$j]['quantidade_reservada_ingrediente'] < 0) {
-                array_push($erros, "A quantidade de reservada não pode ficar negativo.");
+                array_push($erros, "A quantidade reservada não pode ficar negativo.");
             }
-
         }
         return $erros;
     }
-
 }
