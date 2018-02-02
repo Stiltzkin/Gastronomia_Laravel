@@ -27,4 +27,5 @@ Route::resource('classificacoes', 'ClassificacaoController');
 
 Route::resource('aulas', 'AulaController');
 Route::put('/aulas/agendar/{aulas}', ['uses' => 'Calculos\AgendarAulaController@agendarAula', 'as' => 'aula.agendar']);
+Route::put('/aulas/desagendar/{aulas}', ['uses' => 'Calculos\DesagendarAulaController@desagendarAula', 'as' => 'aula.desagendar']);
 Route::put('/aulas/concluir/{aulas}', ['uses' => 'Calculos\ConcluirAulaController@concluirAula', 'as' => 'aula.concluir']);

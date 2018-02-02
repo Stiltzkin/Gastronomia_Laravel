@@ -17,27 +17,31 @@ class ConcluirAulaController extends CalculosAulaController
         $dados = $request->only(['aula_agendada', 'aula_concluida']);
         $aula = Aula::find($id);
 
+        if ($aula) {
+            if ($aula['aula_concluida'] == true) {
+                return response()->json(['data' => "Aula já está concluida.", 'status' => false]);
+            }
+        } else {
+            return response()->json(['data' => "Aula não existe.", 'status' => false]);
+        }
+
         # localizado em Calculos/CalculosAulaController
         $ing = $this->agendarConcluirAula($dados, $aula, $id);
         $ingredienteArray = $ing[0];
-        $ingredienteCalculadoArray = $ing[1];
-        // $errosAula = $ing[2];
-        $errosIngredienteArray = $ing[3];
-        $ingredienteReservadoAulaArray = $ing[4];
+        $ingredientesReservadosTotal = $ing[1];
 
-        # calculos para conclusao da aula
-        $subtraidoEstoque = [];
-        $subtraidoEstoqueArray = [];
+        # calculo de subtraçao dos ingredientes do estoque e da quantidade_reservada
+        $estoqueSubtraido = [];
+        $estoqueSubtraidoArray = [];
+        for ($i = 0; $i < count($ingredientesReservadosTotal); $i++) {
+            $estoqueSubtraido['id_ingrediente'] = $ingredientesReservadosTotal[$i]['id_ingrediente'];
+            $estoqueSubtraido['quantidade_estoque_ingrediente'] = $ingredienteArray[$i]['quantidade_estoque_ingrediente'] - $ingredientesReservadosTotal[$i]['quantidade_reservada_ingrediente'];
+            $estoqueSubtraido['quantidade_reservada_ingrediente'] = $ingredienteArray[$i]['quantidade_reservada_ingrediente'] - $ingredientesReservadosTotal[$i]['quantidade_reservada_ingrediente'];
 
-        for ($i = 0; $i < count($ingredienteCalculadoArray); $i++) {
-            $subtraidoEstoque['id_ingrediente'] = $ingredienteCalculadoArray[$i]['id_ingrediente'];
-            $subtraidoEstoque['quantidade_estoque_ingrediente'] = $ingredienteArray[$i]['quantidade_estoque_ingrediente'] - $ingredienteReservadoAulaArray[$i]['quantidade_reservada_ingrediente'];
-            $subtraidoEstoque['quantidade_reservada_ingrediente'] = $ingredienteArray[$i]['quantidade_reservada_ingrediente'] - $ingredienteReservadoAulaArray[$i]['quantidade_reservada_ingrediente'];
-
-            array_push($subtraidoEstoqueArray, $subtraidoEstoque);
+            array_push($estoqueSubtraidoArray, $estoqueSubtraido);
         }
 
-        $erros = $this->validacao($subtraidoEstoqueArray);
+        $erros = $this->validacao($estoqueSubtraidoArray);
 
         # conclui a aula efetivamente
         if (empty($errosIngredienteArray) && empty($erros)) {
@@ -45,7 +49,8 @@ class ConcluirAulaController extends CalculosAulaController
                 $aula->update($dados);
 
                 for ($n = 0; $n < count($ingredienteArray); $n++) {
-                    $ingredienteArray[$n]->update($ingredienteCalculadoArray[$n]);
+                    $ingrediente = $ingredienteArray[$n];
+                    $ingrediente->update($estoqueSubtraidoArray[$n]);
                 }
 
                 return response()->json(['data' => "Aula concluida com sucesso.", 'status' => true]);
@@ -57,15 +62,15 @@ class ConcluirAulaController extends CalculosAulaController
         }
     }
 
-    public function validacao($subtraidoEstoqueArray)
+    public function validacao($estoqueSubtraidoArray)
     {
         $erros = [];
 
-        for ($j = 0; $j < count($subtraidoEstoqueArray); $j++) {
-            if ($subtraidoEstoqueArray[$j]['quantidade_estoque_ingrediente'] < 0) {
+        for ($j = 0; $j < count($estoqueSubtraidoArray); $j++) {
+            if ($estoqueSubtraidoArray[$j]['quantidade_estoque_ingrediente'] < 0) {
                 array_push($erros, "A quantidade de estoque não pode ficar negativo.");
             }
-            if ($subtraidoEstoqueArray[$j]['quantidade_reservada_ingrediente'] < 0) {
+            if ($estoqueSubtraidoArray[$j]['quantidade_reservada_ingrediente'] < 0) {
                 array_push($erros, "A quantidade reservada não pode ficar negativo.");
             }
         }

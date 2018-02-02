@@ -20,6 +20,11 @@ class Aula extends Model
         'nome_aula',
     ];
 
+    protected $attributes = [
+        'aula_agendada' => 0,
+        'aula_concluida' => 0,
+    ];
+
     public function receitas()
     {
         return $this->belongsToMany('App\Receita', 'aula_receitas', 'id_aula', 'id_receita')->withPivot('quantidade_receita');

@@ -43,14 +43,20 @@ class IngredienteController extends Controller
         $dadosMotivo = $request->only(['motivo_retirada']);
         $ingrediente = Ingrediente::find($id);
 
-        $erros = $this->validaSubtrai($dados, $ingrediente, $dadosMotivo);
-
-        if (empty($erros)) {
+        if ($ingrediente && $dados) {
             $estoqueBd = $ingrediente['quantidade_estoque_ingrediente'];
             $estoqueView = $dados['quantidade_estoque_ingrediente'];
             $estoqueTotal = $estoqueBd - $estoqueView;
 
             $dados['quantidade_estoque_ingrediente'] = $estoqueTotal;
+        } else {
+            return response()->json(['data' => "Problemas ao recuperar ingrediente.", 'status' => false]);
+        }
+
+        # validacao
+        $erros = $this->validaSubtrai($dados, $ingrediente, $dadosMotivo);
+
+        if (empty($erros)) {
 
             // insere id_ingrediente no JSON para ser salvo na tabela motivo_retiradas
             $dadosMotivo['id_ingrediente'] = $ingrediente['id_ingrediente'];
@@ -98,6 +104,9 @@ class IngredienteController extends Controller
         }
         if (strlen($dadosMotivo['motivo_retirada']) == 0 || strlen($dadosMotivo['motivo_retirada']) == null) {
             array_push($erros, "Insira o motivo de subtrair o estoque.");
+        }
+        if ($ingrediente['quantidade_reservada_ingrediente'] > $dados['quantidade_estoque_ingrediente']) {
+            array_push($erros, "Existem ingredientes ja reservados desta quantidade.");
         }
         return $erros;
     }

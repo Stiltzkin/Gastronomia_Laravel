@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Calculos;
 use App\Http\Controllers\Controller;
 use App\Ingrediente;
 use App\Receita;
-use App\UnidadeMedida;
 
 class CalculosAulaController extends Controller
 {
@@ -14,49 +13,36 @@ class CalculosAulaController extends Controller
         # seleciona os dados da tabela pivot aula_receitas
         $aulaReceitas = $aula->receitas()->get()->pluck('pivot');
 
-        // =============================================== //
-
-        $receita = Receita::find($aulaReceitas);
-
-        # seleciona os dados da tabela pivot receita_ingredientes e armazena na array $receitaArr
+        # cria array com pivot receita_ingredientes das receitas usadas na aula
         $receitaArr = [];
-        foreach ($receita as $receitaIngrediente) {
-            array_push($receitaArr, $receitaIngrediente->ingredientes->pluck('pivot'));
+        for ($n = 0; $n < count($aulaReceitas); $n++) {
+            $receita = Receita::find($aulaReceitas[$n]['id_receita'])->ingredientes->pluck('pivot');
+            array_push($receitaArr, $receita);
         }
 
-        // =============================================== //
+        # chama a funçao para fazer os calculos
+        $ingredientesReservadosTotal = $this->calculos($receitaArr, $aulaReceitas);
 
-        # array com os ingredientes calculados
-        $ingredienteData = $this->calculos($receitaArr);
-        $ingredienteArray = $ingredienteData[0];
-        $ingredienteReservadoTotalArray = $ingredienteData[1];
-        $ingredienteReservadoAulaArray = $ingredienteData[2];
+        # cria array dos ingredientes para ser atualizado
+        $ingredienteArray = $this->arrayIngredientesParaAtualizar($ingredientesReservadosTotal);
 
-        # validacao da aula
-        $errosAula = $this->validacaoAula($dados);
-        $errosIngredienteArray = [];
-
-        for ($m = 0; $m < count($ingredienteReservadoTotalArray); $m++) {
-            $errosIngrediente = $this->validacaoIngrediente($ingredienteArray[$m], $ingredienteReservadoTotalArray[$m]);
-            array_push($errosIngredienteArray, $errosIngrediente);
-        }
-
-        return [$ingredienteArray, $ingredienteReservadoTotalArray, $errosAula, $errosIngredienteArray, $ingredienteReservadoAulaArray];
+        return [$ingredienteArray, $ingredientesReservadosTotal];
     }
 
-    public function calculos($receitaArr)
+    public function calculos($receitaArr, $aulaReceitas)
     {
         # cria array de ingredientes usadas nas receitas (ocorrem repeticoes de ingredientes)
         $ingredienteVal = [];
         $arrayId = [];
 
         # array de ingredientes no formato desejado
+        # a quantidade_receita da tabela aula_receias foi inserido nele para facilitar os calculos
         $postArr = [];
-
         for ($i = 0; $i < count($receitaArr); $i++) {
             for ($j = 0; $j < count($receitaArr[$i]); $j++) {
-
+                $ingredienteVal['quantidade_receita'] = $aulaReceitas[$i]['quantidade_receita'];
                 $ingredienteVal['id_ingrediente'] = $receitaArr[$i][$j]['id_ingrediente'];
+                $ingredienteVal['id_receita'] = $receitaArr[$i][$j]['id_receita'];
                 $ingredienteVal['quantidade_reservada_ingrediente'] = $receitaArr[$i][$j]['quantidade_bruta_receita_ingrediente'];
                 $post_data = json_decode(json_encode(array('ingredientes' => $ingredienteVal), JSON_FORCE_OBJECT));
 
@@ -65,70 +51,46 @@ class CalculosAulaController extends Controller
             }
         }
 
-        # cria array com quantas vezes um mesmo ingrediente aparece na array
-        $repeticoesArr = array_count_values($arrayId);
-        $key = array_keys($repeticoesArr);
+        # calcula quantidade_reservada dos ingredientes de cada receita
+        # pode haver repetiçoes de ingredientes pois um ingrediente pode ser usado em outras receitas
+        $reservaAula = [];
+        $reservaAulaArray = [];
+        for ($i = 0; $i < count($postArr); $i++) {
+            $reservaAula['id_ingrediente'] = $postArr[$i]->ingredientes->id_ingrediente;
+            $reservaAula['quantidade_reservada_ingrediente'] = $postArr[$i]->ingredientes->quantidade_receita * $postArr[$i]->ingredientes->quantidade_reservada_ingrediente;
+            array_push($reservaAulaArray, $reservaAula);
+        }
 
-        # remove ingredientes duplicados na array, um mesmo ingrediente pode existir em receitas diferentes
-        $unique = array_unique($postArr, SORT_REGULAR);
+        # soma os ingredientes repetidos gerado na operaçao anterior
+        $reservaAulaTotal = [];
+        $reservaAulaTotalArray = [];
+        foreach ($arrayId as $id) {
+            $qtdReservaTotal = 0;
+            for ($j = 0; $j < count($reservaAulaArray); $j++) {
+                if ($id == $reservaAulaArray[$j]['id_ingrediente']) {
+                    $qtdReservaTotal += $reservaAulaArray[$j]['quantidade_reservada_ingrediente'];
+                    $reservaAulaTotal['id_ingrediente'] = $reservaAulaArray[$j]['id_ingrediente'];
+                    $reservaAulaTotal['quantidade_reservada_ingrediente'] = $qtdReservaTotal;
+                }
+            }
+            array_push($reservaAulaTotalArray, $reservaAulaTotal);
+        }
 
+        # ainda há ingredientes repetidos da operaçao anterior, mas com os valores completamente iguais
+        # aqui é eliminado as repetiçoes
+        $ingredientesReservadosTotal = array_unique($reservaAulaTotalArray, SORT_REGULAR);
+
+        return $ingredientesReservadosTotal;
+    }
+
+    public function arrayIngredientesParaAtualizar($ingredientesReservadosTotal)
+    {
         # cria array dos ingredientes que serao atualizados
         $ingredienteArray = [];
-        for ($l = 0; $l < count($key); $l++) {
-            $ingrediente = Ingrediente::find($key[$l]);
+        for ($l = 0; $l < count($ingredientesReservadosTotal); $l++) {
+            $ingrediente = Ingrediente::find($ingredientesReservadosTotal[$l]['id_ingrediente']);
             array_push($ingredienteArray, $ingrediente);
         }
-
-        $ingredienteNaoCalculadoArr = [];
-        $ingredienteReservadoAula = [];
-
-        $ingredienteReservadoAulaArray = [];
-        $ingredienteReservadoTotalArray = [];
-        for ($k = 0; $k < count($key); $k++) {
-            $porra = (string) $key[$k];
-
-            # ingredientes reservado da aula especifica
-            $ingredienteReservadoAula['id_ingrediente'] = $key[$k];
-            $ingredienteReservadoAula['quantidade_reservada_ingrediente'] = $repeticoesArr[$porra] * $unique[$k]->ingredientes->quantidade_reservada_ingrediente;
-
-            # ingredientes reservado total
-            $ingredienteNaoCalculadoArr['id_ingrediente'] = $key[$k];
-            $ingredienteNaoCalculadoArr['quantidade_reservada_ingrediente'] = ($repeticoesArr[$porra] * $unique[$k]->ingredientes->quantidade_reservada_ingrediente) + $ingredienteArray[$k]['quantidade_reservada_ingrediente'];
-
-            array_push($ingredienteReservadoAulaArray, $ingredienteReservadoAula);
-            array_push($ingredienteReservadoTotalArray, $ingredienteNaoCalculadoArr);
-        }
-
-        return [$ingredienteArray, $ingredienteReservadoTotalArray, $ingredienteReservadoAulaArray];
-    }
-
-    public function validacaoAula($dados)
-    {
-        $date = date('m/d/Y');
-        $date_timestamp = strtotime($date);
-        if (!isset($dados['data_aula'])) {
-            return "Selecione a data da aula";
-        }
-        $erros = [];
-        if ($date_timestamp < $dados['data_aula']) {
-            array_push($erros, "A data não pode ser anterior a hoje.");
-        }
-        if ($dados['data_aula'] == "" || $dados['data_aula'] == null) {
-            array_push($erros, "Selecione a data da aula.");
-        }
-
-        return $erros;
-    }
-
-    public function validacaoIngrediente($ingrediente, $ingredienteCalculado)
-    {
-        $erros = [];
-        if ($ingrediente['quantidade_estoque_ingrediente'] < $ingredienteCalculado['quantidade_reservada_ingrediente']) {
-            $unidade_medida = UnidadeMedida::find($ingrediente['id_unidade_medida']);
-            $qtdFaltante = $ingredienteCalculado['quantidade_reservada_ingrediente'] - $ingrediente['quantidade_estoque_ingrediente'];
-            array_push($erros, "Faltam " . $qtdFaltante . " " . $unidade_medida['simbolo_unidade_medida'] . " de " . $ingrediente['nome_ingrediente'] . " em estoque.");
-        }
-
-        return $erros;
+        return $ingredienteArray;
     }
 }
