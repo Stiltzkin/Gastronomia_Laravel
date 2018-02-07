@@ -14,52 +14,57 @@ class ConcluirAulaController extends CalculosAulaController
 
     public function concluirAula(Request $request, $id)
     {
-        $dados = $request->only(['aula_agendada', 'aula_concluida']);
-        $aula = Aula::find($id);
+        try {
+            $dados = $request->only(['aula_agendada', 'aula_concluida']);
+            $aula = Aula::find($id);
 
-        if ($aula) {
-            if ($aula['aula_concluida'] == true) {
-                return response()->json(['data' => "Aula já está concluida.", 'status' => false]);
-            }
-        } else {
-            return response()->json(['data' => "Aula não existe.", 'status' => false]);
-        }
-
-        # localizado em Calculos/CalculosAulaController
-        $ing = $this->agendarConcluirAula($dados, $aula, $id);
-        $ingredienteArray = $ing[0];
-        $ingredientesReservadosTotal = $ing[1];
-
-        # calculo de subtraçao dos ingredientes do estoque e da quantidade_reservada
-        $estoqueSubtraido = [];
-        $estoqueSubtraidoArray = [];
-        for ($i = 0; $i < count($ingredientesReservadosTotal); $i++) {
-            $estoqueSubtraido['id_ingrediente'] = $ingredientesReservadosTotal[$i]['id_ingrediente'];
-            $estoqueSubtraido['quantidade_estoque_ingrediente'] = $ingredienteArray[$i]['quantidade_estoque_ingrediente'] - $ingredientesReservadosTotal[$i]['quantidade_reservada_ingrediente'];
-            $estoqueSubtraido['quantidade_reservada_ingrediente'] = $ingredienteArray[$i]['quantidade_reservada_ingrediente'] - $ingredientesReservadosTotal[$i]['quantidade_reservada_ingrediente'];
-
-            array_push($estoqueSubtraidoArray, $estoqueSubtraido);
-        }
-
-        $erros = $this->validacao($estoqueSubtraidoArray);
-
-        # conclui a aula efetivamente
-        if (empty($errosIngredienteArray) && empty($erros)) {
             if ($aula) {
-                $aula->update($dados);
-
-                for ($n = 0; $n < count($ingredienteArray); $n++) {
-                    $ingrediente = $ingredienteArray[$n];
-                    $ingrediente->update($estoqueSubtraidoArray[$n]);
+                if ($aula['aula_concluida'] == true) {
+                    return response()->json(['message' => "Aula já está concluida."], 400);
                 }
-
-                return response()->json(['data' => "Aula concluida com sucesso.", 'status' => true]);
             } else {
-                return response()->json(['data' => 'Não foi possível concluir a aula.', 'status' => false]);
+                return response()->json(['message' => "Aula não existe."], 404);
             }
-        } else {
-            return response()->json(['erros_ingredientes' => $errosIngredienteArray, 'erros_conclusao' => $erros, 'status' => false]);
+
+            # localizado em Calculos/CalculosAulaController
+            $ing = $this->agendarConcluirAula($dados, $aula, $id);
+            $ingredienteArray = $ing[0];
+            $ingredientesReservadosTotal = $ing[1];
+
+            # calculo de subtraçao dos ingredientes do estoque e da quantidade_reservada
+            $estoqueSubtraido = [];
+            $estoqueSubtraidoArray = [];
+            for ($i = 0; $i < count($ingredientesReservadosTotal); $i++) {
+                $estoqueSubtraido['id_ingrediente'] = $ingredientesReservadosTotal[$i]['id_ingrediente'];
+                $estoqueSubtraido['quantidade_estoque_ingrediente'] = $ingredienteArray[$i]['quantidade_estoque_ingrediente'] - $ingredientesReservadosTotal[$i]['quantidade_reservada_ingrediente'];
+                $estoqueSubtraido['quantidade_reservada_ingrediente'] = $ingredienteArray[$i]['quantidade_reservada_ingrediente'] - $ingredientesReservadosTotal[$i]['quantidade_reservada_ingrediente'];
+
+                array_push($estoqueSubtraidoArray, $estoqueSubtraido);
+            }
+
+            $erros = $this->validacao($estoqueSubtraidoArray);
+
+            # conclui a aula efetivamente
+            if (empty($errosIngredienteArray) && empty($erros)) {
+                if ($aula) {
+                    $aula->update($dados);
+
+                    for ($n = 0; $n < count($ingredienteArray); $n++) {
+                        $ingrediente = $ingredienteArray[$n];
+                        $ingrediente->update($estoqueSubtraidoArray[$n]);
+                    }
+
+                    return response()->json(['message' => "Aula concluida com sucesso."], 204);
+                } else {
+                    return response()->json(['message' => 'Aula não existe.'], 404);
+                }
+            } else {
+                return response()->json(['erros_ingredientes' => $errosIngredienteArray, 'erros_conclusao' => $erros], 400);
+            }
+        } catch (\Exception $e) {
+            return response()->json('Ocorreu um erro no servidor.', 500);
         }
+
     }
 
     public function validacao($estoqueSubtraidoArray)

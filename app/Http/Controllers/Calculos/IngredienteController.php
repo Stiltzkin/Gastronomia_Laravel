@@ -16,59 +16,82 @@ class IngredienteController extends Controller
 
     public function soma(Request $request, $id)
     {
-        $dados = $request->only(['quantidade_estoque_ingrediente', 'valor_ingrediente']);
-        $ingrediente = Ingrediente::find($id);
+        try {
+            if ($id < 0) {
+                return response()->json(['data' => 'ID menor que zero, por favor, informe um ID válido.'], 400);
+            }
 
-        $erros = $this->validaSoma($dados);
+            $dados = $request->only(['quantidade_estoque_ingrediente', 'valor_ingrediente']);
+            $ingrediente = Ingrediente::find($id);
 
-        if (empty($erros)) {
-            $estoqueBd = $ingrediente['quantidade_estoque_ingrediente'];
-            $estoqueView = $dados['quantidade_estoque_ingrediente'];
-            $estoqueTotal = $estoqueBd + $estoqueView;
+            $erros = $this->validaSoma($dados);
 
-            $dados['quantidade_estoque_ingrediente'] = $estoqueTotal;
+            if ($ingrediente) {
+                if (empty($erros)) {
+                    $estoqueBd = $ingrediente['quantidade_estoque_ingrediente'];
+                    $estoqueView = $dados['quantidade_estoque_ingrediente'];
+                    $estoqueTotal = $estoqueBd + $estoqueView;
 
-            $ingrediente->update($dados);
-            return response()->json(['data' => $dados, 'status' => true]);
-        } else {
-            return response()->json(['data' => $erros, 'status' => false]);
+                    $dados['quantidade_estoque_ingrediente'] = $estoqueTotal;
+
+                    $ingrediente->update($dados);
+                    return response()->json(['data' => $ingrediente], 204);
+                } else {
+                    return response()->json(['data' => $erros], 400);
+                }
+            } else {
+                return response()->json(['message' => 'Ingrediente não existe.'], 404);
+            }
+        } catch (\Exception $e) {
+            return response()->json('Ocorreu um erro no servidor.', 500);
         }
-
-        return $estoqueTotal;
     }
 
     public function subtrai(Request $request, $id)
     {
-        $dados = $request->only(['quantidade_estoque_ingrediente']);
-        $dadosMotivo = $request->only(['motivo_retirada']);
-        $ingrediente = Ingrediente::find($id);
+        try {
+            if ($id < 0) {
+                return response()->json(['data' => 'ID menor que zero, por favor, informe um ID válido.'], 400);
+            }
 
-        if ($ingrediente && $dados) {
-            $estoqueBd = $ingrediente['quantidade_estoque_ingrediente'];
-            $estoqueView = $dados['quantidade_estoque_ingrediente'];
-            $estoqueTotal = $estoqueBd - $estoqueView;
+            $dados = $request->only(['quantidade_estoque_ingrediente']);
+            $dadosMotivo = $request->only(['motivo_retirada']);
+            $ingrediente = Ingrediente::find($id);
 
-            $dados['quantidade_estoque_ingrediente'] = $estoqueTotal;
-        } else {
-            return response()->json(['data' => "Problemas ao recuperar ingrediente.", 'status' => false]);
+            if ($ingrediente) {
+                if ($dados) {
+                    $estoqueBd = $ingrediente['quantidade_estoque_ingrediente'];
+                    $estoqueView = $dados['quantidade_estoque_ingrediente'];
+                    $estoqueTotal = $estoqueBd - $estoqueView;
+
+                    $dados['quantidade_estoque_ingrediente'] = $estoqueTotal;
+                } else {
+                    return response()->json(['message' => "Dados inválidos."], 400);
+                }
+            } else {
+                return response()->json(['message' => "Ingrediente não existe."], 404);
+            }
+
+            # validacao
+            $erros = $this->validaSubtrai($dados, $ingrediente, $dadosMotivo);
+
+            if (empty($erros)) {
+
+                // insere id_ingrediente no JSON para ser salvo na tabela motivo_retiradas
+                $dadosMotivo['id_ingrediente'] = $ingrediente['id_ingrediente'];
+
+                // Atualiza o estoque do ingrediente e insere o motivo da retirada
+                $ingrediente->update($dados);
+                MotivoRetirada::create($dadosMotivo);
+
+                return response()->json(['data' => $dados, 'motivo_retirada' => $dadosMotivo], 204);
+            } else {
+                return response()->json(['data' => $erros], 400);
+            }
+        } catch (\Exception $e) {
+            return response()->json('Ocorreu um erro no servidor.', 500);
         }
 
-        # validacao
-        $erros = $this->validaSubtrai($dados, $ingrediente, $dadosMotivo);
-
-        if (empty($erros)) {
-
-            // insere id_ingrediente no JSON para ser salvo na tabela motivo_retiradas
-            $dadosMotivo['id_ingrediente'] = $ingrediente['id_ingrediente'];
-
-            // Atualiza o estoque do ingrediente e insere o motivo da retirada
-            $ingrediente->update($dados);
-            MotivoRetirada::create($dadosMotivo);
-
-            return response()->json(['data' => $dados, 'motivo_retirada' => $dadosMotivo, 'status' => true]);
-        } else {
-            return response()->json(['data' => $erros, 'status' => false]);
-        }
     }
 
     public function validaSoma($dados)

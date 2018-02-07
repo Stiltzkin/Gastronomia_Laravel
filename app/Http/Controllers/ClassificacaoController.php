@@ -15,18 +15,7 @@ class ClassificacaoController extends Controller
     public function index()
     {
         $classificacao = Classificacao::all();
-
-        return response()->json(['data' => $classificacao, 'status' => true]);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        return response()->json(['data' => $classificacao]);
     }
 
     /**
@@ -37,19 +26,22 @@ class ClassificacaoController extends Controller
      */
     public function store(Request $request)
     {
-        $dados = $request->all();
+        try {
+            $dados = $request->all();
 
-        if (empty($erros)) {
-            $classificacao = Classificacao::create($dados);
-            if ($classificacao) {
-                return response()->json(['data' => $dados, 'status' => true]);
+            if (empty($erros)) {
+                $classificacao = Classificacao::create($dados);
+                if ($classificacao) {
+                    return response()->json(['data' => $classificacao], 201);
+                } else {
+                    return response()->json(['message' => 'Dados inválidos.'], 400);
+                }
             } else {
-                return response()->json(['data' => 'Não foi possível adicionar a classiicação.', 'status' => false]);
+                return response()->json(['data' => $erros], 400);
             }
-        } else {
-            return response()->json(['data' => $erros, 'status' => false]);
+        } catch (\Exception $e) {
+            return response()->json('Ocorreu um erro no servidor.', 500);
         }
-
     }
 
     /**
@@ -60,24 +52,21 @@ class ClassificacaoController extends Controller
      */
     public function show($id)
     {
-        $classificacao = Classificacao::find($id);
+        try {
+            if ($id < 0) {
+                return response()->json(['message' => 'ID menor que zero, por favor, informe um ID válido.'], 400);
+            }
 
-        if ($classificacao) {
-            return response()->json(['data' => $dados, 'status' => true]);
-        } else {
-            return response()->json(['data' => 'Classificação não existe.', 'status' => false]);
+            $classificacao = Classificacao::find($id);
+
+            if ($classificacao) {
+                return response()->json(['data' => $classificacao], 200);
+            } else {
+                return response()->json(['message' => 'Classificação não existe.'], 404);
+            }
+        } catch (\Exception $e) {
+            return response()->json('Ocorreu um erro no servidor', 500);
         }
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
     }
 
     /**
@@ -89,22 +78,29 @@ class ClassificacaoController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $dados = $request->all();
-        $classificacao = Classificacao::find($id);
-
-        $erros = $this->validacoes($dados);
-
-        if (empty($erros)) {
-            if ($classificacao) {
-                $classificacao = update($dados);
-                return response()->json(['data' => $dados, 'status' => true]);
-            } else {
-                return response()->json(['data' => 'Não foi possível atualizar a classiicação.', 'status' => false]);
+        try {
+            if ($id < 0) {
+                return response()->json(['data' => 'ID menor que zero, por favor, informe um ID válido.'], 400);
             }
-        } else {
-            return response()->json(['data' => $erros, 'status' => false]);
-        }
 
+            $dados = $request->all();
+            $classificacao = Classificacao::find($id);
+
+            $erros = $this->validacoes($dados);
+
+            if (empty($erros)) {
+                if ($classificacao) {
+                    $classificacao = update($dados);
+                    return response()->json(['data' => $classificacao], 204);
+                } else {
+                    return response()->json(['message' => 'Classificação não encontrada.'], 404);
+                }
+            } else {
+                return response()->json(['data' => $erros], 400);
+            }
+        } catch (\Exception $e) {
+            return response()->json('Ocorreu um erro no servidor.', 500);
+        }
     }
 
     /**
@@ -115,13 +111,21 @@ class ClassificacaoController extends Controller
      */
     public function destroy($id)
     {
-        $classificacao = Classificacao::find($id);
+        try {
+            if ($id < 0) {
+                return response()->json(['message' => 'ID menor que zero, por favor, informe um ID válido.'], 400);
+            }
 
-        if ($classificacao) {
-            $classificacao->delete();
-            return response()->json(['data' => $dados, 'status' => true]);
-        } else {
-            return response()->json(['data' => 'Não foi possível adicionar a classiicação.', 'status' => false]);
+            $classificacao = Classificacao::find($id);
+
+            if ($classificacao) {
+                $classificacao->delete();
+                return response()->json(['data' => $classificacao], 200);
+            } else {
+                return response()->json(['message' => 'Classificação não encontrada.'], 404);
+            }
+        } catch (\Exception $e) {
+            return response()->json('Ocorreu um erro no servidor', 500);
         }
     }
 

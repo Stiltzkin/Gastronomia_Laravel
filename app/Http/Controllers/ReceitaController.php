@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Receita;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\Paginator;
 
 class ReceitaController extends Controller
 {
@@ -16,20 +17,20 @@ class ReceitaController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $receita = Receita::all();
-        return response()->json(['data' => $receita, 'status' => true]);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        try {
+            $qtd = $request['qtd'];
+            $page = $request['page'];
+            Paginator::currentPageResolver(function () use ($page) {
+                return $page;
+            });
+            $receita = Receita::paginate($qtd);
+            $receita = $receita->appends(Request::capture()->except('page'));
+            return response()->json(['data' => $receita], 200);
+        } catch (\Exception $e) {
+            return response()->json('Ocorreu um erro no servidor.', 500);
+        }
     }
 
     /**
@@ -40,23 +41,26 @@ class ReceitaController extends Controller
      */
     public function store(Request $request)
     {
-        $dados = $request->all();
-        $erros = $this->validacoes($dados);
+        try {
+            $dados = $request->all();
+            $erros = $this->validacoes($dados);
 
-        if (empty($erros)) {
+            if (empty($erros)) {
 
-            $receita = Receita::create($dados);
+                $receita = Receita::create($dados);
 
-            if ($receita) {
-                $receita->ingredientes()->sync((array) $request->ingredientes);
-                return response()->json(['data' => $dados, 'status' => true]);
+                if ($receita) {
+                    $receita->ingredientes()->sync((array) $request->ingredientes);
+                    return response()->json(['data' => $receita], 201);
+                } else {
+                    return response()->json(['message' => 'Dados inválidos.'], 400);
+                }
             } else {
-                return response()->json(['data' => 'Erro ao criar receita.', 'status' => false]);
+                return response()->json(['data' => $erros], 400);
             }
-        } else {
-            return response()->json(['data' => $erros, 'status' => false]);
+        } catch (\Exception $e) {
+            return response()->json('Erro no servidor.', 500);
         }
-
     }
 
     /**
@@ -67,24 +71,21 @@ class ReceitaController extends Controller
      */
     public function show($id)
     {
-        $receita = Receita::find($id);
+        try {
+            if ($id < 0) {
+                return response()->json(['message' => 'ID menor que zero, por favor, informe um ID válido.'], 400);
+            }
 
-        if ($receita) {
-            return response()->json(['data' => $receita, 'status' => true]);
-        } else {
-            return response()->json(['data' => 'Receita não encontrado.', 'status' => false]);
+            $receita = Receita::find($id);
+
+            if ($receita) {
+                return response()->json(['data' => $receita], 200);
+            } else {
+                return response()->json(['message' => 'Receita não encontrado.'], 404);
+            }
+        } catch (\Exception $e) {
+            return response()->json('Erro no servidor.', 500);
         }
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
     }
 
     /**
@@ -96,23 +97,30 @@ class ReceitaController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $receita = Receita::find($id);
-        $dados = $request->all();
-
-        $erros = $this->validacoes($dados);
-
-        if (empty($erros)) {
-            if ($receita) {
-                $receita->update($dados);
-                $receita->ingredientes()->sync((array) $request->ingredientes);
-                return response()->json(['data' => 'Receita atualizada com sucesso.', 'status' => true]);
-            } else {
-                return response()->json(['data' => 'Não foi possível atualizar a receita', 'status' => false]);
+        try {
+            if ($id < 0) {
+                return response()->json(['message' => 'ID menor que zero, por favor, informe um ID válido.'], 400);
             }
-        } else {
-            return response()->json(['data' => $erros, 'status' => false]);
-        }
 
+            $receita = Receita::find($id);
+            $dados = $request->all();
+
+            $erros = $this->validacoes($dados);
+
+            if (empty($erros)) {
+                if ($receita) {
+                    $receita->update($dados);
+                    $receita->ingredientes()->sync((array) $request->ingredientes);
+                    return response()->json(['message' => 'Receita atualizada com sucesso.'], 204);
+                } else {
+                    return response()->json(['message' => 'Receita não encontrado.'], 404);
+                }
+            } else {
+                return response()->json(['data' => $erros], 400);
+            }
+        } catch (\Exception $e) {
+            return response()->json('Erro no servidor.', 500);
+        }
     }
 
     /**
@@ -123,13 +131,21 @@ class ReceitaController extends Controller
      */
     public function destroy($id)
     {
-        $receita = Receita::find($id);
+        try {
+            if ($id < 0) {
+                return response()->json(['message' => 'ID menor que zero, por favor, informe um ID válido.'], 400);
+            }
 
-        if ($receita) {
-            $receita->delete();
-            return response()->json(['data' => $receita->nome_receita . ' deletado com sucesso.', 'status' => true]);
-        } else {
-            return response()->json(['data' => 'Não foi possivel deletar a receita', 'status' => false]);
+            $receita = Receita::find($id);
+
+            if ($receita) {
+                $receita->delete();
+                return response()->json(['data' => $receita->nome_receita . ' deletado com sucesso.', 'status' => true], 200);
+            } else {
+                return response()->json(['message' => 'Receita não encontrado.', 'status' => false], 404);
+            }
+        } catch (\Exception $e) {
+            return response()->json('Erro no servidor.', 500);
         }
     }
 

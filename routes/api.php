@@ -15,17 +15,45 @@
 //     return $request->user();
 // });
 
-Route::resource('ingredientes', 'IngredienteController');
-Route::put('/ingredientes/soma/{ingrediente}', ['uses' => 'Calculos\IngredienteController@soma', 'as' => 'ingrediente.soma']);
-Route::put('/ingredientes/subtrai/{ingrediente}', ['uses' => 'Calculos\IngredienteController@subtrai', 'as' => 'ingrediente.subtrai']);
+# ingredientes
+Route::get('/ingredientes', 'IngredienteController@index');
+Route::get('/ingredientes/{ingrediente}', 'IngredienteController@show');
+Route::post('/ingredientes', 'IngredienteController@store');
+Route::put('/ingredientes/{ingrediente}', 'IngredienteController@update');
+Route::put('/ingredientes/soma/{ingrediente}', 'Calculos\IngredienteController@soma');
+Route::put('/ingredientes/subtrai/{ingrediente}', 'Calculos\IngredienteController@subtrai');
+Route::delete('/ingredientes/{ingrediente}', 'IngredienteController@destroy');
 
-Route::get('motivo_retiradas', ['uses' => 'MotivoRetiradaController@index', 'as' => 'motivo_retirada.index']);
+# motivo de retirada
+Route::get('motivo_retiradas', 'MotivoRetiradaController@index');
 
-Route::resource('receitas', 'ReceitaController');
-Route::resource('categorias', 'CategoriaController');
-Route::resource('classificacoes', 'ClassificacaoController');
+# reeitas
+Route::get('/receitas', 'ReceitaController@index');
+Route::get('/receitas/{receita}', 'ReceitaController@show');
+Route::post('/receitas', 'ReceitaController@store');
+Route::put('/receitas/{receita}', 'ReceitaController@update');
+Route::delete('/receitas/{receita}', 'ReceitaController@destroy');
 
-Route::resource('aulas', 'AulaController');
-Route::put('/aulas/agendar/{aulas}', ['uses' => 'Calculos\AgendarAulaController@agendarAula', 'as' => 'aula.agendar']);
-Route::put('/aulas/desagendar/{aulas}', ['uses' => 'Calculos\DesagendarAulaController@desagendarAula', 'as' => 'aula.desagendar']);
-Route::put('/aulas/concluir/{aulas}', ['uses' => 'Calculos\ConcluirAulaController@concluirAula', 'as' => 'aula.concluir']);
+# aulas
+Route::get('/aulas', 'AulaController@index');
+Route::get('/aulas/{aula}', 'AulaController@show');
+Route::post('/aulas', 'AulaController@store');
+Route::put('/aulas/{aula}', 'AulaController@update');
+Route::delete('/aulas/{aula}', 'AulaController@destroy');
+Route::put('/aulas/agendar/{aula}', 'Calculos\AgendarAulaController@agendarAula');
+Route::put('/aulas/desagendar/{aula}', 'Calculos\DesagendarAulaController@desagendarAula');
+Route::put('/aulas/concluir/{aula}', 'Calculos\ConcluirAulaController@concluirAula');
+
+# categoria
+Route::get('/categorias', 'CategoriaController@index');
+Route::get('/categorias/{categoria}', 'CategoriaController@show');
+Route::post('/categorias', 'CategoriaController@store');
+Route::put('/categorias/{categoria}', 'CategoriaController@update');
+Route::delete('/categorias/{categoria}', 'CategoriaController@destroy');
+
+# classificacao
+Route::get('/classificacoes', 'ClassificacaoController@index');
+Route::get('/classificacoes/{classificacao}', 'ClassificacaoController@show');
+Route::post('/classificacoes', 'ClassificacaoController@store');
+Route::put('/classificacoes/{classificacao}', 'ClassificacaoController@update');
+Route::delete('/classificacoes/{classificacao}', 'ClassificacaoController@destroy');

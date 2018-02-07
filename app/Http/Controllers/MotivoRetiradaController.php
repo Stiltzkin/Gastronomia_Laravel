@@ -20,17 +20,7 @@ class MotivoRetiradaController extends Controller
     /// TODO: listar os motivos pela id_ingrediente
     public function show($id)
     {
-        // $motivo = MotivoRetirada::all();
         $motivo = MotivoRetirada::find($id);
-
-        // $motivoSelected = MotivoRetirada::find($id);
-        // $motivoSel = MotivoRetirada::where('id_ingrediente', $motivo['id_ingrediente'])->get();
-
         return $motivo;
-        // if($motivo){
-        //     return response()->json(['data' => $motivo, 'status' => true]);
-        // } else {
-        //     return response()->json(['data' => 'Motivo não existe', 'status' => false]);
-        // }
     }
 }

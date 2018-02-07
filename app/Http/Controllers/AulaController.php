@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Aula;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\Paginator;
 
 class AulaController extends Controller
 {
@@ -12,20 +13,20 @@ class AulaController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $aula = Aula::all();
-        return response()->json(['data' => $aula, 'status' => true]);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        try {
+            $qtd = $request['qtd'];
+            $page = $request['page'];
+            Paginator::currentPageResolver(function () use ($page) {
+                return $page;
+            });
+            $aula = Aula::paginate($qtd);
+            $aula = $aula->appends(Request::capture()->except('page'));
+            return response()->json(['data' => $aula], 200);
+        } catch (\Exception $e) {
+            return response()->json('Ocorreu um erro no servidor.', 500);
+        }
     }
 
     /**
@@ -36,17 +37,20 @@ class AulaController extends Controller
      */
     public function store(Request $request)
     {
-        $dados = $request->all();
+        try {
+            $dados = $request->all();
 
-        $aula = Aula::create($dados);
+            $aula = Aula::create($dados);
 
-        if ($aula) {
-            $aula->receitas()->sync((array) $request->receitas);
-            return response()->json(['data' => $dados, 'status' => true]);
-        } else {
-            return response()->json(['data' => 'Não foi possível criar a aula.', 'status' => false]);
+            if ($aula) {
+                $aula->receitas()->sync((array) $request->receitas);
+                return response()->json(['data' => $aula], 201);
+            } else {
+                return response()->json(['message' => 'Dados inválidos.'], 400);
+            }
+        } catch (\Exception $e) {
+            return response()->json('Ocorreu um erro no servidor.', 500);
         }
-
     }
 
     /**
@@ -57,24 +61,21 @@ class AulaController extends Controller
      */
     public function show($id)
     {
-        $aula = Aula::find($id);
+        try {
+            if ($id < 0) {
+                return response()->json(['message' => 'ID menor que zero, por favor, informe um ID válido.'], 400);
+            }
 
-        if ($aula) {
-            return response()->json(['data' => $aula, 'status' => true]);
-        } else {
-            return response()->json(['data' => 'Aula não existe.', 'status' => false]);
+            $aula = Aula::find($id);
+
+            if ($aula) {
+                return response()->json(['data' => $aula], 200);
+            } else {
+                return response()->json(['message' => 'Aula não existe.'], 404);
+            }
+        } catch (\Exception $e) {
+            return response()->json('Ocorreu um erro no servidor.', 500);
         }
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
     }
 
     /**
@@ -86,15 +87,26 @@ class AulaController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $dados = $request->all();
-        $aula = Aula::find($id);
+        try {
+            if ($id < 0) {
+                return response()->json(['message' => 'ID menor que zero, por favor, informe um ID válido.'], 400);
+            }
 
-        if ($aula) {
-            $aula->update($dados);
-            $aula->receitas()->sync((array) $request->receitas);
-            return response()->json(['data' => 'Aula atualizada com sucesso.', 'status' => true]);
-        } else {
-            return response()->json(['data' => 'Não foi possível atualizar a aula.', 'status' => false]);
+            $dados = $request->all();
+            $aula = Aula::find($id);
+
+            if ($aula) {
+                $aula['aula_agendada'] = false;
+                $aula['aula_concluida'] = false;
+
+                $aula->update($dados);
+                $aula->receitas()->sync((array) $request->receitas);
+                return response()->json(['message' => 'Aula atualizada com sucesso.'], 204);
+            } else {
+                return response()->json(['message' => 'Aula não encontrada.'], 404);
+            }
+        } catch (\Exception $e) {
+            return response()->json('Ocorreu um erro no servidor.', 500);
         }
     }
 
@@ -106,13 +118,21 @@ class AulaController extends Controller
      */
     public function destroy($id)
     {
-        $aula = Aula::find($id);
+        try {
+            if ($id < 0) {
+                return response()->json(['message' => 'ID menor que zero, por favor, informe um ID válido.'], 400);
+            }
 
-        if ($aula) {
-            $aula->delete();
-            return response()->json(['data' => 'Aula deletada com sucesso.', 'status' => true]);
-        } else {
-            return response()->json(['data' => 'Não foi possível atualizar a aula.', 'status' => false]);
+            $aula = Aula::find($id);
+
+            if ($aula) {
+                $aula->delete();
+                return response()->json(['message' => 'Aula deletada com sucesso.'], 200);
+            } else {
+                return response()->json(['message' => 'Aula não encontrada.'], 404);
+            }
+        } catch (\Exception $e) {
+            return response()->json('Ocorreu um erro no servidor.', 500);
         }
     }
 }

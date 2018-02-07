@@ -8,82 +8,72 @@ use Illuminate\Http\Request;
 class CategoriaController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Display a listing of the response.
      *
      * @return \Illuminate\Http\Response
      */
     public function index()
     {
         $categoria = Categoria::all();
-
-        return response()->json(['data' => $categoria, 'status' => true]);
+        return response()->json(['data' => $categoria]);
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
+     * Store a newly created response in storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
-        $dados = $request->all();
+        try {
+            $dados = $request->all();
 
-        $erros = $this->validacoes($erros);
+            $erros = $this->validacoes($erros);
 
-        if (empty($erros)) {
-            $categoria = Categoria::create($dados);
+            if (empty($erros)) {
+                $categoria = Categoria::create($dados);
 
-            if ($categoria) {
-                return resource()->json(['data' => $dados, 'status' => true]);
+                if ($categoria) {
+                    return response()->json(['data' => $categoria], 201);
+                } else {
+                    return response()->json(['message' => 'Dados inválidos.'], 400);
+                }
             } else {
-                return resource()->json(['data' => 'Não foi possível criar a categoria.', 'status' => false]);
+                return response()->json(['data' => $erros], 400);
             }
-        } else {
-            return resource()->json(['data' => $erros, 'status' => false]);
+        } catch (\Exception $e) {
+            return response()->json('Ocorreu um erro no servidor.', 500);
         }
     }
 
     /**
-     * Display the specified resource.
+     * Display the specified response.
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function show($id)
     {
-        $categoria = Categoria::find($id);
+        try {
+            if ($id < 0) {
+                return response()->json(['message' => 'ID menor que zero, por favor, informe um ID válido.'], 400);
+            }
 
-        if ($categoria) {
-            return resource()->json(['data' => $categoria, 'status' => true]);
-        } else {
-            return resource()->json(['data' => 'Categoria não existe.', 'status' => false]);
+            $categoria = Categoria::find($id);
+
+            if ($categoria) {
+                return response()->json(['data' => $categoria], 200);
+            } else {
+                return response()->json(['message' => 'Categoria não existe.'], 404);
+            }
+        } catch (\Exception $e) {
+            return response()->json('Ocorreu um erro no servidor.', 500);
         }
     }
 
     /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
+     * Update the specified response in storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
@@ -91,39 +81,54 @@ class CategoriaController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $dados = $request()->all();
-        $categoria = Categoria::find($id);
-
-        $erros = $this->validacoes($dados);
-
-        if (empty($erros)) {
-            if ($categoria) {
-                $categoria->update($dados);
-                return resource()->json(['data' => $categoria, 'status' => true]);
-            } else {
-                return resource()->json(['data' => 'Não foi possível atualizar a categoria', 'status' => false]);
+        try {
+            if ($id < 0) {
+                return response()->json(['message' => 'ID menor que zero, por favor, informe um ID válido.'], 400);
             }
-        } else {
-            return resource()->json(['data' => $erros, 'status' => false]);
-        }
 
+            $dados = $request()->all();
+            $categoria = Categoria::find($id);
+
+            $erros = $this->validacoes($dados);
+
+            if (empty($erros)) {
+                if ($categoria) {
+                    $categoria->update($dados);
+                    return response()->json(['data' => $categoria], 204);
+                } else {
+                    return response()->json(['message' => 'Categoria não existe.'], 404);
+                }
+            } else {
+                return response()->json(['data' => $erros], 400);
+            }
+        } catch (\Exception $e) {
+            return response()->json('Ocorreu um erro no servidor.', 500);
+        }
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Remove the specified response from storage.
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
     {
-        $categoria = Categoria::find($id);
+        try {
+            if ($id < 0) {
+                return response()->json(['data' => 'ID menor que zero, por favor, informe um ID válido.'], 400);
+            }
 
-        if ($categoria) {
-            $categoria->delete();
-            return resource()->json(['data' => $categoria, 'status' => true]);
-        } else {
-            return resource()->json(['data' => 'Não foi possível deletar a categoria.', 'status' => false]);
+            $categoria = Categoria::find($id);
+
+            if ($categoria) {
+                $categoria->delete();
+                return response()->json(['data' => $categoria], 200);
+            } else {
+                return response()->json(['message' => 'Categoria não existe.'], 404);
+            }
+        } catch (\Exception $e) {
+            return response()->json('Ocorreu um erro no servidor.', 500);
         }
     }
 

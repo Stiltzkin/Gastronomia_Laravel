@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Ingrediente;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\Paginator;
 
 class IngredienteController extends Controller
 {
@@ -17,20 +18,20 @@ class IngredienteController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $ingrediente = Ingrediente::all();
-        return response()->json(['data' => $ingrediente, 'status' => true]);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        try {
+            $qtd = $request['qtd'];
+            $page = $request['page'];
+            Paginator::currentPageResolver(function () use ($page) {
+                return $page;
+            });
+            $ingrediente = Ingrediente::paginate($qtd);
+            $ingrediente = $ingrediente->appends(Request::capture()->except('page'));
+            return response()->json(['data' => $ingrediente], 200);
+        } catch (\Exception $e) {
+            return response()->json('Erro no servidor.', 500);
+        }
     }
 
     /**
@@ -41,22 +42,26 @@ class IngredienteController extends Controller
      */
     public function store(Request $request)
     {
-        $dados = $request->all();
+        try {
+            $dados = $request->all();
 
-        // Faz a validacao do ingrediente
-        $erros = $this->validacoes($dados);
+            // Faz a validacao do ingrediente
+            $erros = $this->validacoes($dados);
 
-        if (empty($erros)) {
+            if (empty($erros)) {
 
-            $ingrediente = Ingrediente::create($dados);
+                $ingrediente = Ingrediente::create($dados);
 
-            if ($ingrediente) {
-                return response()->json(['data' => $ingrediente, 'status' => true]);
+                if ($ingrediente) {
+                    return response()->json(['data' => $ingrediente], 201);
+                } else {
+                    return response()->json(['message' => 'Dados inválidos.'], 400);
+                }
             } else {
-                return response()->json(['data' => 'Erro ao criar ingrediente.', 'status' => false]);
+                return response()->json(['data' => $erros], 400);
             }
-        } else {
-            return response()->json(['data' => $erros, 'status' => false]);
+        } catch (\Exception $e) {
+            return response()->json('Erro no servidor.', 500);
         }
     }
 
@@ -68,24 +73,21 @@ class IngredienteController extends Controller
      */
     public function show($id)
     {
-        $ingrediente = Ingrediente::find($id);
+        try {
+            if ($id < 0) {
+                return response()->json(['message' => 'ID menor que zero, por favor, informe um ID válido.'], 400);
+            }
 
-        if ($ingrediente) {
-            return response()->json(['data' => $ingrediente, 'status' => true]);
-        } else {
-            return response()->json(['data' => 'Ingrediente não encontrado.', 'status' => false]);
+            $ingrediente = Ingrediente::find($id);
+
+            if ($ingrediente) {
+                return response()->json(['data' => $ingrediente], 200);
+            } else {
+                return response()->json(['message' => 'Ingrediente não encontrado.'], 404);
+            }
+        } catch (\Exception $e) {
+            return response()->json('Erro no servido.r', 500);
         }
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
     }
 
     /**
@@ -97,22 +99,29 @@ class IngredienteController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $ingrediente = Ingrediente::find($id);
-        $dados = $request->all();
-
-        $erros = $this->validacoes($dados);
-
-        if (empty($erros)) {
-            if ($ingrediente) {
-                $ingrediente->update($dados);
-                return response()->json(['data' => $ingrediente, 'status' => true]);
-            } else {
-                return response()->json(['data' => 'Não foi possível atualizar o ingrediente.', 'status' => false]);
+        try {
+            if ($id < 0) {
+                return response()->json(['message' => 'ID menor que zero, por favor, informe um ID válido.'], 400);
             }
-        } else {
-            return response()->json(['data' => $erros, 'status' => false]);
-        }
 
+            $ingrediente = Ingrediente::find($id);
+            $dados = $request->all();
+
+            $erros = $this->validacoes($dados);
+
+            if (empty($erros)) {
+                if ($ingrediente) {
+                    $ingrediente->update($dados);
+                    return response()->json(['data' => $ingrediente], 204);
+                } else {
+                    return response()->json(['message' => 'Ingrediente não encontrado.'], 404);
+                }
+            } else {
+                return response()->json(['data' => $erros], 400);
+            }
+        } catch (\Exception $e) {
+            return response()->json('Erro no servidor.', 500);
+        }
     }
 
     /**
@@ -123,13 +132,21 @@ class IngredienteController extends Controller
      */
     public function destroy($id)
     {
-        $ingrediente = Ingrediente::find($id);
+        try {
+            if ($id < 0) {
+                return response()->json(['message' => 'ID menor que zero, por favor, informe um ID válido.'], 400);
+            }
 
-        if ($ingrediente) {
-            $ingrediente->delete();
-            return response()->json(['data' => $ingrediente->nome_ingrediente . ' removido com sucesso!', 'status' => true]);
-        } else {
-            return response()->json(['data' => 'Não foi possível deletar o ingrediente', 'status' => false]);
+            $ingrediente = Ingrediente::find($id);
+
+            if ($ingrediente) {
+                $ingrediente->delete();
+                return response()->json(['message' => $ingrediente->nome_ingrediente . ' removido com sucesso!'], 200);
+            } else {
+                return response()->json(['message' => 'Ingrediente não encontrado.'], 404);
+            }
+        } catch (\Exception $e) {
+            return response()->json('Erro no servidor.', 500);
         }
     }
 
