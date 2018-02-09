@@ -50,7 +50,6 @@ class AulaController extends Extend\PaginateController
         } catch (\Exception $e) {
             return response()->json('Ocorreu um erro no servidor.', 500);
         }
-
     }
 
     /**
