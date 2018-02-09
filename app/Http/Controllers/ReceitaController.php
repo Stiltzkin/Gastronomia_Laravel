@@ -6,7 +6,7 @@ use App\Receita;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\Paginator;
 
-class ReceitaController extends Controller
+class ReceitaController extends Extend\PaginateController
 {
     public function __construct()
     {
@@ -25,8 +25,26 @@ class ReceitaController extends Controller
             Paginator::currentPageResolver(function () use ($page) {
                 return $page;
             });
-            $receita = Receita::paginate($qtd);
-            $receita = $receita->appends(Request::capture()->except('page'));
+
+            $receitaAll = Receita::all();
+            $receitaArray = [];
+            for ($i = 0; $i < count($receitaAll); $i++) {
+                $receitaFind = Receita::find($receitaAll[$i]['id_receita']);
+                $receitaPivot = Receita::find($receitaAll[$i]['id_receita'])->ingredientes;
+                $receitaFind['pivot'] = $receitaPivot;
+                array_push($receitaArray, $receitaFind);
+            }
+
+            if ($qtd == null && $page == null) {
+                $receita = $receitaArray;
+            }
+            if ($qtd !== null && $page !== null) {
+                $receita = $this->paginate($receitaArray, $qtd, $page);
+                $receita = $receita->appends(Request::capture()->except('page'));
+            }
+            if ($qtd == null && $page !== null || $qtd !== null && $page == null) {
+                return response()->json(["message" => "Comando inválido."], 400);
+            }
             return response()->json(['data' => $receita], 200);
         } catch (\Exception $e) {
             return response()->json('Ocorreu um erro no servidor.', 500);

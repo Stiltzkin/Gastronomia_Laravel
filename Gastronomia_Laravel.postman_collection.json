@@ -6,14 +6,17 @@
 		"dd125a22-bdc8-a1be-323d-5c9febedbd0e",
 		"6f4cf522-4d34-d338-fbdf-18adc31cc464",
 		"fb673ffa-304a-f0b2-a595-a65b08020b5d",
+		"b8cb052e-c147-4130-d435-f3b789a5e2a2",
 		"221a1add-0644-8092-a38a-543fabdc7614",
 		"810f6351-0d78-5219-d3c7-8f418bdf1313",
 		"c7b31a71-5888-9951-8e0e-007bf6b80d5e",
 		"18056af0-f7f4-8662-58eb-6bf0891c5eda",
 		"4d844ef0-bd29-a6d3-548b-5e4cddff96c7",
+		"5908f801-c172-5cfc-e76c-f172383d6576",
 		"7709e3d0-6bef-287a-32ed-a08b4b87c12e",
 		"c6124874-a195-9857-d4be-fafdfae1a905",
 		"7ad327a9-4a96-8b23-57ba-d7b10decb895",
+		"12d14a3d-cc24-5f06-b400-e0fb5a21a257",
 		"a318ad37-13ae-3a6e-f55c-28dc08f4ceb6",
 		"9778cf8d-b773-6979-4a46-1ca55f83a0c6",
 		"1eaed240-c6b4-c6dc-b13c-26b01666110e",
@@ -28,6 +31,48 @@
 	"variables": [],
 	"auth": null,
 	"requests": [
+		{
+			"id": "12d14a3d-cc24-5f06-b400-e0fb5a21a257",
+			"headers": "Content-Type: application/json\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "http://localhost:8000/api/aulas",
+			"queryParams": [],
+			"events": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "cc83690c-23f9-4422-a15b-dbf1780db47a",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			],
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "GET",
+			"data": [],
+			"dataMode": "raw",
+			"auth": null,
+			"time": 1518108731600,
+			"name": "Aula",
+			"description": "Post Receita",
+			"collectionId": "be337da5-b712-491c-2228-d8d9a147e4e2",
+			"responses": [],
+			"preRequestScript": null,
+			"tests": null,
+			"currentHelper": null,
+			"helperAttributes": null,
+			"rawModeData": "{\r\n\t\"data_aula\": \"2018-02-28\",\r\n\t\"descricao_aula\": \"teste attributes\",\r\n\t\"id_periodo_aula\": 1,\r\n\t\"nome_aula\": \"aula do caralho\",\r\n\t\"receitas\": [{\r\n\t\t\t\"id_receita\": 2,\r\n\t\t\t\"quantidade_receita\": 22\r\n\t\t},{\r\n\t\t\t\"id_receita\": 3,\r\n\t\t\t\"quantidade_receita\": 10\r\n\t\t}\r\n\t]\r\n}"
+		},
 		{
 			"id": "18056af0-f7f4-8662-58eb-6bf0891c5eda",
 			"headers": "Content-Type: application/json\n",
@@ -123,7 +168,7 @@
 					"enabled": true
 				}
 			],
-			"url": "http://localhost:8000/api/ingredientes/soma/1",
+			"url": "http://localhost:8000/api/ingredientes/soma/6",
 			"queryParams": [],
 			"events": [
 				{
@@ -143,7 +188,7 @@
 			"data": [],
 			"dataMode": "raw",
 			"auth": null,
-			"time": 1517609515113,
+			"time": 1518041014367,
 			"name": "Ingrediente +",
 			"description": "Post Ingrediente",
 			"collectionId": "be337da5-b712-491c-2228-d8d9a147e4e2",
@@ -152,7 +197,7 @@
 			"tests": null,
 			"currentHelper": null,
 			"helperAttributes": null,
-			"rawModeData": "{\n    \"quantidade_estoque_ingrediente\": 900,\n    \"valor_ingrediente\": 22\n}"
+			"rawModeData": "{\n    \"quantidade_estoque_ingrediente\": 10,\n    \"valor_ingrediente\": 2\n}"
 		},
 		{
 			"id": "26ef6833-7d37-fd95-3349-01886da8eef9",
@@ -207,11 +252,11 @@
 					"enabled": true
 				}
 			],
-			"url": "http://localhost:8000/api/receitas?qtd=3&page=1",
+			"url": "http://localhost:8000/api/receitas?qtd=2&page=1",
 			"queryParams": [
 				{
 					"key": "qtd",
-					"value": "3",
+					"value": "2",
 					"equals": true,
 					"description": "",
 					"enabled": true
@@ -242,8 +287,50 @@
 			"data": [],
 			"dataMode": "raw",
 			"auth": null,
-			"time": 1518035518055,
+			"time": 1518199159700,
 			"name": "Receita paginate",
+			"description": "Post Receita",
+			"collectionId": "be337da5-b712-491c-2228-d8d9a147e4e2",
+			"responses": [],
+			"preRequestScript": null,
+			"tests": null,
+			"currentHelper": null,
+			"helperAttributes": null,
+			"rawModeData": "{\r\n\t\"nome_receita\": \"Abacaxi com cocos do caralho\",\r\n\t\"modo_preparo_receita\": \"Monte de coisa inutil\",\r\n\t\"id_classificacao\": 2,\r\n\t\"id_categoria\": 1,\r\n\t\"ingredientes\": [{\r\n\t\t\t\"id_ingrediente\": 2,\r\n\t\t\t\"quantidade_bruta_receita_ingrediente\": 8,\r\n\t\t\t\"custo_bruto_receita_ingrediente\": 2\r\n\t\t},\r\n\t\t{\r\n\t\t\t\"id_ingrediente\": 1,\r\n\t\t\t\"quantidade_bruta_receita_ingrediente\": 18,\r\n\t\t\t\"custo_bruto_receita_ingrediente\": 2\r\n\t\t}\r\n\t]\r\n}"
+		},
+		{
+			"id": "5908f801-c172-5cfc-e76c-f172383d6576",
+			"headers": "Content-Type: application/json\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "http://localhost:8000/api/receitas",
+			"queryParams": [],
+			"events": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "cc83690c-23f9-4422-a15b-dbf1780db47a",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			],
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "GET",
+			"data": [],
+			"dataMode": "raw",
+			"auth": null,
+			"time": 1518199095398,
+			"name": "Receita",
 			"description": "Post Receita",
 			"collectionId": "be337da5-b712-491c-2228-d8d9a147e4e2",
 			"responses": [],
@@ -264,7 +351,7 @@
 					"enabled": true
 				}
 			],
-			"url": "http://localhost:8000/api/ingredientes/6",
+			"url": "http://localhost:8000/api/ingredientes/5",
 			"queryParams": [],
 			"events": [
 				{
@@ -284,7 +371,7 @@
 			"data": [],
 			"dataMode": "raw",
 			"auth": null,
-			"time": 1518036476431,
+			"time": 1518041025864,
 			"name": "Ingrediente Update",
 			"description": "Post Ingrediente",
 			"collectionId": "be337da5-b712-491c-2228-d8d9a147e4e2",
@@ -348,18 +435,18 @@
 					"enabled": true
 				}
 			],
-			"url": "http://localhost:8000/api/aulas?qtd=3&page=1",
+			"url": "http://localhost:8000/api/aulas?qtd=1&page=2",
 			"queryParams": [
 				{
 					"key": "qtd",
-					"value": "3",
+					"value": "1",
 					"equals": true,
 					"description": "",
 					"enabled": true
 				},
 				{
 					"key": "page",
-					"value": "1",
+					"value": "2",
 					"equals": true,
 					"description": "",
 					"enabled": true
@@ -383,7 +470,7 @@
 			"data": [],
 			"dataMode": "raw",
 			"auth": null,
-			"time": 1518035587685,
+			"time": 1518199255384,
 			"name": "Aula paginate",
 			"description": "Post Receita",
 			"collectionId": "be337da5-b712-491c-2228-d8d9a147e4e2",
@@ -447,7 +534,7 @@
 					"enabled": true
 				}
 			],
-			"url": "http://localhost:8000/api/aulas/desagendar/6",
+			"url": "http://localhost:8000/api/aulas/desagendar/3",
 			"queryParams": [],
 			"events": [
 				{
@@ -467,7 +554,7 @@
 			"data": [],
 			"dataMode": "raw",
 			"auth": null,
-			"time": 1518020943834,
+			"time": 1518041024205,
 			"name": "Aula Desagendar",
 			"description": "Post Receita",
 			"collectionId": "be337da5-b712-491c-2228-d8d9a147e4e2",
@@ -489,7 +576,7 @@
 					"enabled": true
 				}
 			],
-			"url": "http://localhost:8000/api/aulas/agendar/2",
+			"url": "http://localhost:8000/api/aulas/agendar/3",
 			"queryParams": [],
 			"events": [
 				{
@@ -509,7 +596,7 @@
 			"data": [],
 			"dataMode": "raw",
 			"auth": null,
-			"time": 1518031228410,
+			"time": 1518041016223,
 			"name": "Aula Agendar",
 			"description": "Post Receita",
 			"collectionId": "be337da5-b712-491c-2228-d8d9a147e4e2",
@@ -519,6 +606,48 @@
 			"currentHelper": null,
 			"helperAttributes": null,
 			"rawModeData": "{\r\n\t\"data_aula\": \"2018-02-28\",\r\n\t\"descricao_aula\": \"Monte de coisa inutil\",\r\n\t\"aula_agendada\": true,\r\n\t\"aula_concluida\": false,\r\n\t\"id_periodo_aula\": 1,\r\n\t\"nome_aula\": \"aula do caralho\",\r\n\t\"receitas\": [{\r\n\t\t\t\"id_receita\": 1,\r\n\t\t\t\"quantidade_receita\": 2\r\n\t\t},{\r\n\t\t\t\"id_receita\": 2,\r\n\t\t\t\"quantidade_receita\": 10\r\n\t\t}\r\n\t]\r\n}"
+		},
+		{
+			"id": "b8cb052e-c147-4130-d435-f3b789a5e2a2",
+			"headers": "Content-Type: application/json\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "http://localhost:8000/api/ingredientes",
+			"queryParams": [],
+			"events": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "cc83690c-23f9-4422-a15b-dbf1780db47a",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			],
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "GET",
+			"data": [],
+			"dataMode": "raw",
+			"auth": null,
+			"time": 1518108658900,
+			"name": "Ingrediente",
+			"description": "",
+			"collectionId": "be337da5-b712-491c-2228-d8d9a147e4e2",
+			"responses": [],
+			"preRequestScript": null,
+			"tests": null,
+			"currentHelper": null,
+			"helperAttributes": null,
+			"rawModeData": "{\n    \"nome_ingrediente\": \"teste\",\n    \"id_unidade_medida\": 2,\n    \"quantidade_calorica_ingrediente\": 10,\n    \"aproveitamento_ingrediente\": 90.5,\n    \"quantidade_estoque_ingrediente\": 0,\n    \"quantidade_reservada_ingrediente\": 0,\n    \"valor_ingrediente\": 0\n}"
 		},
 		{
 			"id": "c6124874-a195-9857-d4be-fafdfae1a905",
@@ -557,7 +686,6 @@
 			"collectionId": "be337da5-b712-491c-2228-d8d9a147e4e2",
 			"responses": [],
 			"isFromCollection": true,
-			"collectionRequestId": "7709e3d0-6bef-287a-32ed-a08b4b87c12e",
 			"preRequestScript": null,
 			"tests": null,
 			"currentHelper": null,

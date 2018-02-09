@@ -6,8 +6,13 @@ use App\Aula;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\Paginator;
 
-class AulaController extends Controller
+class AulaController extends Extend\PaginateController
 {
+    public function __construct()
+    {
+        header('Access-Control-Allow-Origin: *');
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -21,12 +26,31 @@ class AulaController extends Controller
             Paginator::currentPageResolver(function () use ($page) {
                 return $page;
             });
-            $aula = Aula::paginate($qtd);
-            $aula = $aula->appends(Request::capture()->except('page'));
+
+            $aulaAll = Aula::all();
+            $aulaArray = [];
+            for ($i = 0; $i < count($aulaAll); $i++) {
+                $aulaFind = Aula::find($aulaAll[$i]['id_aula']);
+                $aulaPivot = Aula::find($aulaAll[$i]['id_aula'])->receitas;
+                $aulaFind['pivot'] = $aulaPivot;
+                array_push($aulaArray, $aulaFind);
+            }
+
+            if ($qtd == null && $page == null) {
+                $aula = $aulaArray;
+            }
+            if ($qtd !== null && $page !== null) {
+                $aula = $this->paginate($aulaArray, $qtd, $page);
+                $aula = $aula->appends(Request::capture()->except('page'));
+            }
+            if ($qtd == null && $page !== null || $qtd !== null && $page == null) {
+                return response()->json(["message" => "Comando inválido."], 400);
+            }
             return response()->json(['data' => $aula], 200);
         } catch (\Exception $e) {
             return response()->json('Ocorreu um erro no servidor.', 500);
         }
+
     }
 
     /**

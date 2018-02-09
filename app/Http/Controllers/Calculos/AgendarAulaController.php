@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Calculos;
 
 use App\Aula;
+use App\Http\Controllers\Extend\CalculosAulaController;
 use App\UnidadeMedida;
 use Illuminate\Http\Request;
 

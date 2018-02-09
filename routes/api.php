@@ -57,3 +57,6 @@ Route::get('/classificacoes/{classificacao}', 'ClassificacaoController@show');
 Route::post('/classificacoes', 'ClassificacaoController@store');
 Route::put('/classificacoes/{classificacao}', 'ClassificacaoController@update');
 Route::delete('/classificacoes/{classificacao}', 'ClassificacaoController@destroy');
+
+# unidade_medida
+Route::get('/unidades', 'UnidadeMedidaController@index');

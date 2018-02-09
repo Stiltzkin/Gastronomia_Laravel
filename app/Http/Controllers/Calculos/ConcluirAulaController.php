@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Calculos;
 
 use App\Aula;
+use App\Http\Controllers\Extend\CalculosAulaController;
 use Illuminate\Http\Request;
 
 class ConcluirAulaController extends CalculosAulaController

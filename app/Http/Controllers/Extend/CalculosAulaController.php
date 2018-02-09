@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Calculos;
+namespace App\Http\Controllers\Extend;
 
 use App\Http\Controllers\Controller;
 use App\Ingrediente;
