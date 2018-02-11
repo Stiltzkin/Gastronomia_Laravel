@@ -21,6 +21,7 @@ class Ingrediente extends Model
         'valor_ingrediente',
     ];
     protected $attributes = [
+        'quantidade_estoque_ingrediente' => 0,
         'quantidade_reservada_ingrediente' => 0,
         'valor_ingrediente' => 0,
     ];

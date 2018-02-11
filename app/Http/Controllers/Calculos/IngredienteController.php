@@ -91,7 +91,6 @@ class IngredienteController extends Controller
         } catch (\Exception $e) {
             return response()->json('Ocorreu um erro no servidor.', 500);
         }
-
     }
 
     public function validaSoma($dados)
