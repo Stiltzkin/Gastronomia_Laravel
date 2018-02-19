@@ -45,7 +45,7 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::post('/aulas/agendar/{aula}', 'Calculos\AgendarAulaController@agendarAula')->middleware('scope:administrador');;
     Route::post('/aulas/desagendar/{aula}', 'Calculos\DesagendarAulaController@desagendarAula')->middleware('scope:administrador');;
     Route::post('/aulas/concluir/{aula}', 'Calculos\ConcluirAulaController@concluirAula')->middleware('scope:administrador');;
-    Route::post('/aulas/clone/{aula}', 'AulaController@clonarAula');
+    Route::post('/aulas/clone/{aula}', 'AulaController@clonarAula')->middleware('scope:administrador');
 
     # categoria
     Route::get('/categorias', 'CategoriaController@index')->middleware('scope:administrador');;
