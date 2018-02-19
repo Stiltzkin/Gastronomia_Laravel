@@ -115,28 +115,29 @@ class ReceitaController extends Extend\PaginateController
      */
     public function update(Request $request, $id)
     {
-        try {
+        try{
             if ($id < 0) {
                 return response()->json(['message' => 'ID menor que zero, por favor, informe um ID válido.'], 400);
             }
-
             $receita = Receita::find($id);
             $dados = $request->all();
 
             $erros = $this->validacoes($dados);
 
-            if (empty($erros)) {
-                if ($receita) {
-                    $receita->update($dados);
-                    $receita->ingredientes()->sync((array) $request->ingredientes);
-                    return response()->json(['message' => 'Receita atualizada com sucesso.'], 204);
-                } else {
-                    return response()->json(['message' => 'Receita não encontrado.'], 404);
+            if($receita){
+                $receita->ingredientes()->detach();
+
+                for($i=0; $i<count($request->ingredientes); $i++){
+                    $receita->ingredientes()->attach($receita['id_receita'],
+                    ['id_ingrediente' => $request->ingredientes[$i]['id_ingrediente'],
+                    'quantidade_bruta_receita_ingrediente' => $request->ingredientes[$i]['quantidade_bruta_receita_ingrediente'],
+                    'custo_bruto_receita_ingrediente'=> $request->ingredientes[$i]['custo_bruto_receita_ingrediente']]);
                 }
             } else {
-                return response()->json(['data' => $erros], 400);
+                return response()->json(['message' => 'Receita não encontrado.'], 404);
             }
-        } catch (\Exception $e) {
+            return response()->json(['data' => $dados]);
+        }catch (\Exception $e) {
             return response()->json('Erro no servidor.', 500);
         }
     }
