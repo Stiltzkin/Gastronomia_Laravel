@@ -28,5 +28,13 @@ class AuthServiceProvider extends ServiceProvider
 
         //
         Passport::routes();
+
+        // Tempo de duraçao do token de acesso
+        //Passport::tokensExpireIn(Carbon::now()->addMinutes(10));
+
+        Passport::tokensCan([
+            'usuario' => 'Usuario comum',
+            'administrador' => 'Administrador do Sistema'
+        ]);
     }
 }
