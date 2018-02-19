@@ -29,9 +29,6 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::post('/ingredientes/subtrai/{ingrediente}', 'Calculos\IngredienteController@subtrai')->middleware('scope:administrador,usuario');
     Route::post('/ingredientes/delete/{ingrediente}', 'IngredienteController@destroy')->middleware('scope:administrador,usuario');
 
-    # motivo de retirada
-    Route::get('motivo_retiradas', 'MotivoRetiradaController@index')->middleware('scope:administrador,usuario');
-
     # receitas
     Route::get('/receitas', 'ReceitaController@index')->middleware('scope:administrador');
     Route::get('/receitas/{receita}', 'ReceitaController@show')->middleware('scope:administrador');;
@@ -48,6 +45,7 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::post('/aulas/agendar/{aula}', 'Calculos\AgendarAulaController@agendarAula')->middleware('scope:administrador');;
     Route::post('/aulas/desagendar/{aula}', 'Calculos\DesagendarAulaController@desagendarAula')->middleware('scope:administrador');;
     Route::post('/aulas/concluir/{aula}', 'Calculos\ConcluirAulaController@concluirAula')->middleware('scope:administrador');;
+    Route::post('/aulas/clone/{aula}', 'AulaController@clonarAula');
 
     # categoria
     Route::get('/categorias', 'CategoriaController@index')->middleware('scope:administrador');;
@@ -68,5 +66,8 @@ Route::group(['middleware' => ['auth:api']], function () {
 
     # periodo
     Route::get('/periodos', 'PeriodoController@index')->middleware('scope:administrador');;
+  
+      # motivo de retirada
+    Route::get('motivo_retiradas', 'MotivoRetiradaController@index')->middleware('scope:administrador,usuario');
 });
 
