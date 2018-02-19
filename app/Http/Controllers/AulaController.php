@@ -135,8 +135,8 @@ class AulaController extends Extend\PaginateController
             } else {
                 return response()->json(['message' => 'Aula não encontrada.'], 404);
             }
-        }   catch (\Exception $e) {
-                return response()->json('Ocorreu um erro no servidor.', 500);
+        }  catch (\Exception $e) {
+            return response()->json('Ocorreu um erro no servidor.', 500);
         }
     }
 
@@ -168,33 +168,29 @@ class AulaController extends Extend\PaginateController
 
     public function clonarAula($id)
     {
-        $aula = Aula::find($id);
-        $aula->load('receitas');
+        try{
+            if ($id < 0) {
+                return response()->json(['message' => 'ID menor que zero, por favor, informe um ID válido.'], 400);
+            }
+            $aula = Aula::find($id);
+            $aula->load('receitas');
 
-        // # renomeia a aula
-        // $nomeAula = $aula->nome_aula;
-        // $aula['nome_aula'] = $nomeAula . " CLONE";
+            # renomeia a aula
+            $nomeAula = $aula->nome_aula;
+            $aula['nome_aula'] = $nomeAula . " CLONE";
 
-        // $new_aula = $aula->replicate();
-        // $new_aula->push();
-        // // $receitas = $aula->receitas;
-        // foreach ($aula->receitas as $receitas => $values) {
-        //     $new_aula->receitas()->sync($values);
-        // }
+            $new_aula = $aula->replicate();
+            $new_aula->push();
 
-        // $pivotArray = [];
-        // for ($i = 0; $i < count($receitas); $i++) {
-        //     unset($receitas[$i]->pivot->id_aula);
-        //     array_push($pivotArray, $receitas[$i]->pivot);
-        // }
-
-        // $new_aula->receitas()->sync((array) $pivotArray);
-        // $new_aula->receitas()->attach($aula->receitas);
-
-        // foreach ($aula->receitas as $pivot) {
-        //     $new_aula->receitas()->attach($pivot);
-        // }
-        var_dump($aula->receitas);
-        // return response()->json(['data' => $new_aula], 200);
+            for($i=0; $i<count($aula->receitas); $i++){
+                $new_aula->receitas()->attach($new_aula['id_aula'],
+                ['id_receita' => $aula->receitas[$i]->pivot['id_receita'],
+                'quantidade_receita' => $aula->receitas[$i]->pivot['quantidade_receita']]);
+            }
+            
+            return response()->json(['data' => $new_aula], 200);
+            } catch (\Exception $e) {
+                return response()->json('Ocorreu um erro no servidor.', 500);
+            }        
     }
 }
