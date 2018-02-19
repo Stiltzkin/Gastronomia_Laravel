@@ -31,8 +31,8 @@ class AulaController extends Extend\PaginateController
             $aulaArray = [];
             for ($i = 0; $i < count($aulaAll); $i++) {
                 $aulaFind = Aula::find($aulaAll[$i]['id_aula']);
-                $aulaPivot = Aula::find($aulaAll[$i]['id_aula'])->receitas;
-                $aulaFind['pivot'] = $aulaPivot;
+                $aulareceita = Aula::find($aulaAll[$i]['id_aula'])->receitas;
+                $aulaFind['receita'] = $aulareceita;
                 array_push($aulaArray, $aulaFind);
             }
 
@@ -110,11 +110,11 @@ class AulaController extends Extend\PaginateController
      */
     public function update(Request $request, $id)
     {
-        try {
+        try{
             if ($id < 0) {
                 return response()->json(['message' => 'ID menor que zero, por favor, informe um ID válido.'], 400);
             }
-
+            
             $dados = $request->all();
             $aula = Aula::find($id);
 
@@ -123,13 +123,20 @@ class AulaController extends Extend\PaginateController
                 $aula['aula_concluida'] = false;
 
                 $aula->update($dados);
-                $aula->receitas()->sync((array) $request->receitas);
-                return response()->json(['message' => 'Aula atualizada com sucesso.'], 204);
+                $aula->receitas()->detach();
+
+                for($i=0; $i<count($request->receitas); $i++){
+                    $aula->receitas()->attach($aula['id_aula'],
+                    ['id_receita' => $request->receitas[$i]['id_receita'],
+                    'quantidade_receita' => $request->receitas[$i]['quantidade_receita']]);
+                }
+
+                return response()->json(['data' => $dados]);
             } else {
                 return response()->json(['message' => 'Aula não encontrada.'], 404);
             }
-        } catch (\Exception $e) {
-            return response()->json('Ocorreu um erro no servidor.', 500);
+        }   catch (\Exception $e) {
+                return response()->json('Ocorreu um erro no servidor.', 500);
         }
     }
 
@@ -157,5 +164,37 @@ class AulaController extends Extend\PaginateController
         } catch (\Exception $e) {
             return response()->json('Ocorreu um erro no servidor.', 500);
         }
+    }
+
+    public function clonarAula($id)
+    {
+        $aula = Aula::find($id);
+        $aula->load('receitas');
+
+        // # renomeia a aula
+        // $nomeAula = $aula->nome_aula;
+        // $aula['nome_aula'] = $nomeAula . " CLONE";
+
+        // $new_aula = $aula->replicate();
+        // $new_aula->push();
+        // // $receitas = $aula->receitas;
+        // foreach ($aula->receitas as $receitas => $values) {
+        //     $new_aula->receitas()->sync($values);
+        // }
+
+        // $pivotArray = [];
+        // for ($i = 0; $i < count($receitas); $i++) {
+        //     unset($receitas[$i]->pivot->id_aula);
+        //     array_push($pivotArray, $receitas[$i]->pivot);
+        // }
+
+        // $new_aula->receitas()->sync((array) $pivotArray);
+        // $new_aula->receitas()->attach($aula->receitas);
+
+        // foreach ($aula->receitas as $pivot) {
+        //     $new_aula->receitas()->attach($pivot);
+        // }
+        var_dump($aula->receitas);
+        // return response()->json(['data' => $new_aula], 200);
     }
 }

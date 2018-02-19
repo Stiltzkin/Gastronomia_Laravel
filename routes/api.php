@@ -43,6 +43,7 @@ Route::post('/aulas/delete/{aula}', 'AulaController@destroy');
 Route::post('/aulas/agendar/{aula}', 'Calculos\AgendarAulaController@agendarAula');
 Route::post('/aulas/desagendar/{aula}', 'Calculos\DesagendarAulaController@desagendarAula');
 Route::post('/aulas/concluir/{aula}', 'Calculos\ConcluirAulaController@concluirAula');
+Route::post('/aulas/clone/{aula}', 'AulaController@clonarAula');
 
 # categoria
 Route::get('/categorias', 'CategoriaController@index');
