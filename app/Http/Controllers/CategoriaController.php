@@ -7,6 +7,10 @@ use Illuminate\Http\Request;
 
 class CategoriaController extends Controller
 {
+    public function __construct()
+    {
+        header('Access-Control-Allow-Origin: *');
+    }
     /**
      * Display a listing of the response.
      *
