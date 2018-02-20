@@ -19,36 +19,33 @@ class ReceitaController extends Extend\PaginateController
      */
     public function index(Request $request)
     {
-        try {
-            $qtd = $request['qtd'];
-            $page = $request['page'];
-            Paginator::currentPageResolver(function () use ($page) {
-                return $page;
-            });
+        $qtd = $request['qtd'];
+        $page = $request['page'];
+        Paginator::currentPageResolver(function () use ($page) {
+            return $page;
+        });
 
-            $receitaAll = Receita::all();
-            $receitaArray = [];
-            for ($i = 0; $i < count($receitaAll); $i++) {
-                $receitaFind = Receita::find($receitaAll[$i]['id_receita']);
-                $receitaPivot = Receita::find($receitaAll[$i]['id_receita'])->ingredientes;
-                $receitaFind['pivot'] = $receitaPivot;
-                array_push($receitaArray, $receitaFind);
-            }
-
-            if ($qtd == null && $page == null) {
-                $receita = $receitaArray;
-            }
-            if ($qtd !== null && $page !== null) {
-                $receita = $this->paginate($receitaArray, $qtd, $page);
-                $receita = $receita->appends(Request::capture()->except('page'));
-            }
-            if ($qtd == null && $page !== null || $qtd !== null && $page == null) {
-                return response()->json(["message" => "Comando inválido."], 400);
-            }
-            return response()->json(['data' => $receita], 200);
-        } catch (\Exception $e) {
-            return response()->json('Ocorreu um erro no servidor.', 500);
+        $receitaAll = Receita::all();
+        $receitaArray = [];
+        for ($i = 0; $i < count($receitaAll); $i++) {
+            $receitaFind = Receita::find($receitaAll[$i]['id_receita']);
+            $receitaPivot = Receita::find($receitaAll[$i]['id_receita'])->ingredientes;
+            $receitaFind['pivot'] = $receitaPivot;
+            array_push($receitaArray, $receitaFind);
         }
+
+        if ($qtd == null && $page == null) {
+            $receita = $receitaArray;
+        }
+        if ($qtd !== null && $page !== null) {
+            $receita = $this->paginate($receitaArray, $qtd, $page);
+            $receita = $receita->appends(Request::capture()->except('page'));
+        }
+        if ($qtd == null && $page !== null || $qtd !== null && $page == null) {
+            return response()->json(["message" => "Comando inválido."], 400);
+        }
+        return response()->json(['data' => $receita], 200);
+
     }
 
     /**
@@ -115,7 +112,7 @@ class ReceitaController extends Extend\PaginateController
      */
     public function update(Request $request, $id)
     {
-        try{
+        try {
             if ($id < 0) {
                 return response()->json(['message' => 'ID menor que zero, por favor, informe um ID válido.'], 400);
             }
@@ -124,20 +121,20 @@ class ReceitaController extends Extend\PaginateController
 
             $erros = $this->validacoes($dados);
 
-            if($receita){
+            if ($receita) {
                 $receita->ingredientes()->detach();
 
-                for($i=0; $i<count($request->ingredientes); $i++){
+                for ($i = 0; $i < count($request->ingredientes); $i++) {
                     $receita->ingredientes()->attach($receita['id_receita'],
-                    ['id_ingrediente' => $request->ingredientes[$i]['id_ingrediente'],
-                    'quantidade_bruta_receita_ingrediente' => $request->ingredientes[$i]['quantidade_bruta_receita_ingrediente'],
-                    'custo_bruto_receita_ingrediente'=> $request->ingredientes[$i]['custo_bruto_receita_ingrediente']]);
+                        ['id_ingrediente' => $request->ingredientes[$i]['id_ingrediente'],
+                            'quantidade_bruta_receita_ingrediente' => $request->ingredientes[$i]['quantidade_bruta_receita_ingrediente'],
+                            'custo_bruto_receita_ingrediente' => $request->ingredientes[$i]['custo_bruto_receita_ingrediente']]);
                 }
             } else {
                 return response()->json(['message' => 'Receita não encontrado.'], 404);
             }
             return response()->json(['data' => $dados]);
-        }catch (\Exception $e) {
+        } catch (\Exception $e) {
             return response()->json('Erro no servidor.', 500);
         }
     }

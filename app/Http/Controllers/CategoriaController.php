@@ -33,7 +33,7 @@ class CategoriaController extends Controller
         try {
             $dados = $request->all();
 
-            $erros = $this->validacoes($erros);
+            // $erros = $this->validacoes($erros);
 
             if (empty($erros)) {
                 $categoria = Categoria::create($dados);

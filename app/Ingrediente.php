@@ -32,7 +32,7 @@ class Ingrediente extends Model
     }
     public function receitas()
     {
-        return $this->belongsToMany('App\Receita', 'receita_ingredientes', 'id_ingrediente', 'id_receita')->withPivot('quantidade_bruta_receita_ingrediente', 'custo_bruto_receita_ingrediente');
+        return $this->belongsToMany('App\Receita', 'receita_ingredientes', 'id_ingrediente', 'id_receita')->withPivot('quantidade_bruta_receita_ingrediente');
     }
     public function motivo_retiradas()
     {
