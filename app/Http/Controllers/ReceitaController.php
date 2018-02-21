@@ -93,6 +93,9 @@ class ReceitaController extends Extend\PaginateController
 
             $receita = Receita::find($id);
 
+            $receitaPivot = Receita::find($receita['id_receita'])->ingredientes;
+            $receita['pivot'] = $receitaPivot;
+
             if ($receita) {
                 return response()->json(['data' => $receita], 200);
             } else {
@@ -127,8 +130,7 @@ class ReceitaController extends Extend\PaginateController
                 for ($i = 0; $i < count($request->ingredientes); $i++) {
                     $receita->ingredientes()->attach($receita['id_receita'],
                         ['id_ingrediente' => $request->ingredientes[$i]['id_ingrediente'],
-                            'quantidade_bruta_receita_ingrediente' => $request->ingredientes[$i]['quantidade_bruta_receita_ingrediente'],
-                            'custo_bruto_receita_ingrediente' => $request->ingredientes[$i]['custo_bruto_receita_ingrediente']]);
+                            'quantidade_bruta_receita_ingrediente' => $request->ingredientes[$i]['quantidade_bruta_receita_ingrediente']]);
                 }
             } else {
                 return response()->json(['message' => 'Receita não encontrado.'], 404);
