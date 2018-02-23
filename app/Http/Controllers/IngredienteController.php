@@ -13,6 +13,12 @@ class IngredienteController extends Controller
     {
         header('Access-Control-Allow-Origin: *');
     }
+    public function listAll()
+    {
+        $ingrediente = Ingrediente::all();
+
+        return response()->json(['data' => $ingrediente]);
+    }
     /**
      * Display a listing of the resource.
      *

@@ -12,6 +12,13 @@ class ReceitaController extends Extend\PaginateController
     {
         header('Access-Control-Allow-Origin: *');
     }
+
+    public function listAll()
+    {
+        $receita = Receita::all();
+
+        return response()->json(['data' => $receita]);
+    }
     /**
      * Display a listing of the resource.
      *

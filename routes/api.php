@@ -17,6 +17,7 @@
 
 # ingredientes
 Route::get('/ingredientes', 'IngredienteController@index');
+Route::get('/ingredientes/listall', 'IngredienteController@listAll');
 Route::get('/ingredientes/{ingrediente}', 'IngredienteController@show');
 Route::post('/ingredientes', 'IngredienteController@store');
 Route::post('/ingredientes/update/{ingrediente}', 'IngredienteController@update');
@@ -29,6 +30,7 @@ Route::get('motivo_retiradas', 'MotivoRetiradaController@index');
 
 # reeitas
 Route::get('/receitas', 'ReceitaController@index');
+Route::get('/receitas/listall', 'ReceitaController@listAll');
 Route::get('/receitas/{receita}', 'ReceitaController@show');
 Route::post('/receitas', 'ReceitaController@store');
 Route::post('/receitas/update/{receita}', 'ReceitaController@update');
