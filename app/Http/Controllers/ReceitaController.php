@@ -129,6 +129,8 @@ class ReceitaController extends Extend\PaginateController
             $receita = Receita::find($id);
             $dados = $request->all();
 
+            $receita->update($dados);
+
             $erros = $this->validacoes($dados);
 
             if ($receita) {
@@ -186,5 +188,24 @@ class ReceitaController extends Extend\PaginateController
         }
 
         return $erros;
+    }
+
+    public function imageUpload($request, $dados)
+    {
+        $data['image'] = $dados->image;
+
+        if ($request->hasFile('image') && $request->file('image')->isValid()) {
+            if ($dados->image) {
+                $name = $dados->image;
+            } else {
+                $name = $dados->id_receita . kebab_case($dados->nome_receita);
+            }
+
+            $entension = $request->image->extension();
+            $fileName = "{$name}.{$extension}";
+
+            $data['image'] = $fileName;
+            $upload = $request->image->storeAs('dados', $fileName);
+        }
     }
 }
