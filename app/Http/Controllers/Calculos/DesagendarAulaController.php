@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Calculos;
 
 use App\Aula;
 use App\Http\Controllers\Extend\CalculosAulaController;
-use Illuminate\Http\Request;
 
 class DesagendarAulaController extends CalculosAulaController
 {
@@ -13,14 +12,13 @@ class DesagendarAulaController extends CalculosAulaController
         header('Access-Control-Allow-Origin: *');
     }
 
-    public function desagendarAula(Request $request, $id)
+    public function desagendarAula($id)
     {
         try {
             if ($id < 0) {
                 return response()->json(['message' => 'ID menor que zero, por favor, informe um ID válido.'], 400);
             }
 
-            $dados = $request->only(['aula_agendada']);
             $aula = Aula::find($id);
 
             if ($aula) {
@@ -31,8 +29,8 @@ class DesagendarAulaController extends CalculosAulaController
                 return response()->json(['message' => "Aula não existe."], 404);
             }
 
-            # localizado em Calculos/CalculosAulaController
-            $ing = $this->agendarConcluirAula($dados, $aula, $id);
+            # localizado em Extend/CalculosAulaController
+            $ing = $this->agendarConcluirAula($aula, $id);
             $ingredienteArray = $ing[0];
             $ingredientesReservadosTotal = $ing[1];
 
@@ -49,7 +47,7 @@ class DesagendarAulaController extends CalculosAulaController
             if ($aula) {
                 $aula['aula_agendada'] = false;
                 $aula['aula_concluida'] = false;
-                $aula->update($dados);
+                $aula->update();
 
                 for ($n = 0; $n < count($ingredienteArray); $n++) {
                     $ingrediente = $ingredienteArray[$n];
