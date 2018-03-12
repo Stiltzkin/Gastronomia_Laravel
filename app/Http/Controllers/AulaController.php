@@ -155,15 +155,14 @@ class AulaController extends Extend\PaginateController
 
             $aula = Aula::find($id);
 
-            //TODO: Subtrair quantidade_reservada antes de deletar (caso o usuario deletar uma aula_agendada).
-            // botao está desabilitado no frontend ajaxTabelaAulas.js
-
-            $aula->receitas()->detach();
-            if ($aula) {
-                $aula->delete();
-                return response()->json(['message' => 'Aula deletada com sucesso.'], 200);
-            } else {
-                return response()->json(['message' => 'Aula não encontrada.'], 404);
+            if (app('App\Http\Controllers\Calculos\DesagendarAulaController')->desagendarAula($id)) {
+                $aula->receitas()->detach();
+                if ($aula) {
+                    $aula->delete();
+                    return response()->json(['message' => 'Aula deletada com sucesso.'], 200);
+                } else {
+                    return response()->json(['message' => 'Aula não encontrada.'], 404);
+                }
             }
         } catch (\Exception $e) {
             return response()->json('Ocorreu um erro no servidor.', 500);
