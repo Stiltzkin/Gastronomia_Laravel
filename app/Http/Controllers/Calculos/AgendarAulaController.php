@@ -42,7 +42,14 @@ class AgendarAulaController extends CalculosAulaController
                 $aula['aula_concluida'] = false;
 
                 $aula->update($dados);
-                $aula->receitas()->sync((array) $request->receitas);
+                $aula->receitas()->detach();
+
+                for ($i = 0; $i < count($request->receitas); $i++) {
+                    $aula->receitas()->attach($aula['id_aula'],
+                        ['id_receita' => $request->receitas[$i]['id_receita'],
+                            'quantidade_receita' => $request->receitas[$i]['quantidade_receita']]);
+                }
+                # começa o agendamento
 
             } else {
                 return response()->json(['message' => 'Aula não encontrada.'], 404);
@@ -53,7 +60,7 @@ class AgendarAulaController extends CalculosAulaController
 
         # começo do agendamento
         try {
-            # localizado em Calculos/CalculosAulaController
+            # localizado em Calculos/Extend/CalculosAulaController
             $ing = $this->agendarConcluirAula($dados, $aula, $id);
             $ingredienteArray = $ing[0];
             $ingredientesReservadosTotal = $ing[1];

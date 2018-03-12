@@ -27,7 +27,7 @@ class ConcluirAulaController extends CalculosAulaController
                 return response()->json(['message' => "Aula não existe."], 404);
             }
 
-            # localizado em Calculos/CalculosAulaController
+            # localizado em Calculos/Extend/CalculosAulaController
             $ing = $this->agendarConcluirAula($dados, $aula, $id);
             $ingredienteArray = $ing[0];
             $ingredientesReservadosTotal = $ing[1];
@@ -48,6 +48,8 @@ class ConcluirAulaController extends CalculosAulaController
             # conclui a aula efetivamente
             if (empty($errosIngredienteArray) && empty($erros)) {
                 if ($aula) {
+                    $aula['aula_agendada'] = true;
+                    $aula['aula_concluida'] = true;
                     $aula->update($dados);
 
                     for ($n = 0; $n < count($ingredienteArray); $n++) {
