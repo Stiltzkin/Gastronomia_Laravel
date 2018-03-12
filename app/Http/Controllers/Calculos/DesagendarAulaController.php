@@ -45,7 +45,7 @@ class DesagendarAulaController extends CalculosAulaController
                 array_push($calculadoArray, $calculado);
             }
 
-            # agenda a aula efetivamente
+            # desagenda a aula efetivamente
             if ($aula) {
                 $aula['aula_agendada'] = false;
                 $aula['aula_concluida'] = false;
