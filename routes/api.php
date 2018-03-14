@@ -18,8 +18,6 @@
 Route::post('/cadastro','UserController@registrar');
 
 Route::group(['middleware' => ['auth:api']], function () {
-
-
     # ingredientes
     Route::get('/ingredientes', 'IngredienteController@index')->middleware('scope:administrador,usuario');
     Route::get('/ingredientes/{ingrediente}', 'IngredienteController@show')->middleware('scope:administrador,usuario');

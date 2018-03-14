@@ -11,6 +11,8 @@ class Aula extends Model
     protected $primaryKey = 'id_aula';
     protected $dates = ['deleted_at', 'data_aula'];
 
+    // protected $dateFormat = 'Y-m-d';
+
     protected $fillable = [
         'data_aula',
         'descricao_aula',

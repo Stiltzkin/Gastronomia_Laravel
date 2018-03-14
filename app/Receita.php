@@ -20,7 +20,7 @@ class Receita extends Model
 
     public function ingredientes()
     {
-        return $this->belongsToMany('App\Ingrediente', 'receita_ingredientes', 'id_receita', 'id_ingrediente')->withPivot('quantidade_bruta_receita_ingrediente', 'custo_bruto_receita_ingrediente');
+        return $this->belongsToMany('App\Ingrediente', 'receita_ingredientes', 'id_receita', 'id_ingrediente')->withPivot('quantidade_bruta_receita_ingrediente');
     }
 
     public function classificacao()

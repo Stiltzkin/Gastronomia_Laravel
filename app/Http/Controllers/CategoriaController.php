@@ -7,6 +7,10 @@ use Illuminate\Http\Request;
 
 class CategoriaController extends Controller
 {
+    public function __construct()
+    {
+        header('Access-Control-Allow-Origin: *');
+    }
     /**
      * Display a listing of the response.
      *
@@ -29,7 +33,7 @@ class CategoriaController extends Controller
         try {
             $dados = $request->all();
 
-            $erros = $this->validacoes($erros);
+            // $erros = $this->validacoes($erros);
 
             if (empty($erros)) {
                 $categoria = Categoria::create($dados);

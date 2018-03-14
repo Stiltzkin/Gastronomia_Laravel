@@ -8,7 +8,7 @@ use App\Receita;
 
 class CalculosAulaController extends Controller
 {
-    public function agendarConcluirAula($dados, $aula, $id)
+    public function agendarConcluirAula($aula, $id)
     {
         # seleciona os dados da tabela pivot aula_receitas
         $aulaReceitas = $aula->receitas()->get()->pluck('pivot');

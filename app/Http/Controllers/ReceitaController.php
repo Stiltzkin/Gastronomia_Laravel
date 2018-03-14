@@ -12,6 +12,13 @@ class ReceitaController extends Extend\PaginateController
     {
         header('Access-Control-Allow-Origin: *');
     }
+
+    public function listAll()
+    {
+        $receita = Receita::all();
+
+        return response()->json(['data' => $receita]);
+    }
     /**
      * Display a listing of the resource.
      *
@@ -19,36 +26,33 @@ class ReceitaController extends Extend\PaginateController
      */
     public function index(Request $request)
     {
-        try {
-            $qtd = $request['qtd'];
-            $page = $request['page'];
-            Paginator::currentPageResolver(function () use ($page) {
-                return $page;
-            });
+        $qtd = $request['qtd'];
+        $page = $request['page'];
+        Paginator::currentPageResolver(function () use ($page) {
+            return $page;
+        });
 
-            $receitaAll = Receita::all();
-            $receitaArray = [];
-            for ($i = 0; $i < count($receitaAll); $i++) {
-                $receitaFind = Receita::find($receitaAll[$i]['id_receita']);
-                $receitaPivot = Receita::find($receitaAll[$i]['id_receita'])->ingredientes;
-                $receitaFind['pivot'] = $receitaPivot;
-                array_push($receitaArray, $receitaFind);
-            }
-
-            if ($qtd == null && $page == null) {
-                $receita = $receitaArray;
-            }
-            if ($qtd !== null && $page !== null) {
-                $receita = $this->paginate($receitaArray, $qtd, $page);
-                $receita = $receita->appends(Request::capture()->except('page'));
-            }
-            if ($qtd == null && $page !== null || $qtd !== null && $page == null) {
-                return response()->json(["message" => "Comando inválido."], 400);
-            }
-            return response()->json(['data' => $receita], 200);
-        } catch (\Exception $e) {
-            return response()->json('Ocorreu um erro no servidor.', 500);
+        $receitaAll = Receita::all();
+        $receitaArray = [];
+        for ($i = 0; $i < count($receitaAll); $i++) {
+            $receitaFind = Receita::find($receitaAll[$i]['id_receita']);
+            $receitaPivot = Receita::find($receitaAll[$i]['id_receita'])->ingredientes;
+            $receitaFind['pivot'] = $receitaPivot;
+            array_push($receitaArray, $receitaFind);
         }
+
+        if ($qtd == null && $page == null) {
+            $receita = $receitaArray;
+        }
+        if ($qtd !== null && $page !== null) {
+            $receita = $this->paginate($receitaArray, $qtd, $page);
+            $receita = $receita->appends(Request::capture()->except('page'));
+        }
+        if ($qtd == null && $page !== null || $qtd !== null && $page == null) {
+            return response()->json(["message" => "Comando inválido."], 400);
+        }
+        return response()->json(['data' => $receita], 200);
+
     }
 
     /**
@@ -96,6 +100,9 @@ class ReceitaController extends Extend\PaginateController
 
             $receita = Receita::find($id);
 
+            $receitaPivot = Receita::find($receita['id_receita'])->ingredientes;
+            $receita['pivot'] = $receitaPivot;
+
             if ($receita) {
                 return response()->json(['data' => $receita], 200);
             } else {
@@ -115,29 +122,30 @@ class ReceitaController extends Extend\PaginateController
      */
     public function update(Request $request, $id)
     {
-        try{
+        try {
             if ($id < 0) {
                 return response()->json(['message' => 'ID menor que zero, por favor, informe um ID válido.'], 400);
             }
             $receita = Receita::find($id);
             $dados = $request->all();
 
+            $receita->update($dados);
+
             $erros = $this->validacoes($dados);
 
-            if($receita){
+            if ($receita) {
                 $receita->ingredientes()->detach();
 
-                for($i=0; $i<count($request->ingredientes); $i++){
+                for ($i = 0; $i < count($request->ingredientes); $i++) {
                     $receita->ingredientes()->attach($receita['id_receita'],
-                    ['id_ingrediente' => $request->ingredientes[$i]['id_ingrediente'],
-                    'quantidade_bruta_receita_ingrediente' => $request->ingredientes[$i]['quantidade_bruta_receita_ingrediente'],
-                    'custo_bruto_receita_ingrediente'=> $request->ingredientes[$i]['custo_bruto_receita_ingrediente']]);
+                        ['id_ingrediente' => $request->ingredientes[$i]['id_ingrediente'],
+                            'quantidade_bruta_receita_ingrediente' => $request->ingredientes[$i]['quantidade_bruta_receita_ingrediente']]);
                 }
             } else {
                 return response()->json(['message' => 'Receita não encontrado.'], 404);
             }
             return response()->json(['data' => $dados]);
-        }catch (\Exception $e) {
+        } catch (\Exception $e) {
             return response()->json('Erro no servidor.', 500);
         }
     }
@@ -180,5 +188,24 @@ class ReceitaController extends Extend\PaginateController
         }
 
         return $erros;
+    }
+
+    public function imageUpload($request, $dados)
+    {
+        $data['image'] = $dados->image;
+
+        if ($request->hasFile('image') && $request->file('image')->isValid()) {
+            if ($dados->image) {
+                $name = $dados->image;
+            } else {
+                $name = $dados->id_receita . kebab_case($dados->nome_receita);
+            }
+
+            $entension = $request->image->extension();
+            $fileName = "{$name}.{$extension}";
+
+            $data['image'] = $fileName;
+            $upload = $request->image->storeAs('dados', $fileName);
+        }
     }
 }

@@ -110,11 +110,11 @@ class AulaController extends Extend\PaginateController
      */
     public function update(Request $request, $id)
     {
-        try{
+        try {
             if ($id < 0) {
                 return response()->json(['message' => 'ID menor que zero, por favor, informe um ID válido.'], 400);
             }
-            
+
             $dados = $request->all();
             $aula = Aula::find($id);
 
@@ -125,17 +125,17 @@ class AulaController extends Extend\PaginateController
                 $aula->update($dados);
                 $aula->receitas()->detach();
 
-                for($i=0; $i<count($request->receitas); $i++){
+                for ($i = 0; $i < count($request->receitas); $i++) {
                     $aula->receitas()->attach($aula['id_aula'],
-                    ['id_receita' => $request->receitas[$i]['id_receita'],
-                    'quantidade_receita' => $request->receitas[$i]['quantidade_receita']]);
+                        ['id_receita' => $request->receitas[$i]['id_receita'],
+                            'quantidade_receita' => $request->receitas[$i]['quantidade_receita']]);
                 }
 
                 return response()->json(['data' => $dados]);
             } else {
                 return response()->json(['message' => 'Aula não encontrada.'], 404);
             }
-        }  catch (\Exception $e) {
+        } catch (\Exception $e) {
             return response()->json('Ocorreu um erro no servidor.', 500);
         }
     }
@@ -155,11 +155,14 @@ class AulaController extends Extend\PaginateController
 
             $aula = Aula::find($id);
 
-            if ($aula) {
-                $aula->delete();
-                return response()->json(['message' => 'Aula deletada com sucesso.'], 200);
-            } else {
-                return response()->json(['message' => 'Aula não encontrada.'], 404);
+            if (app('App\Http\Controllers\Calculos\DesagendarAulaController')->desagendarAula($id)) {
+                $aula->receitas()->detach();
+                if ($aula) {
+                    $aula->delete();
+                    return response()->json(['message' => 'Aula deletada com sucesso.'], 200);
+                } else {
+                    return response()->json(['message' => 'Aula não encontrada.'], 404);
+                }
             }
         } catch (\Exception $e) {
             return response()->json('Ocorreu um erro no servidor.', 500);
@@ -168,7 +171,7 @@ class AulaController extends Extend\PaginateController
 
     public function clonarAula($id)
     {
-        try{
+        try {
             if ($id < 0) {
                 return response()->json(['message' => 'ID menor que zero, por favor, informe um ID válido.'], 400);
             }
@@ -182,15 +185,15 @@ class AulaController extends Extend\PaginateController
             $new_aula = $aula->replicate();
             $new_aula->push();
 
-            for($i=0; $i<count($aula->receitas); $i++){
+            for ($i = 0; $i < count($aula->receitas); $i++) {
                 $new_aula->receitas()->attach($new_aula['id_aula'],
-                ['id_receita' => $aula->receitas[$i]->pivot['id_receita'],
-                'quantidade_receita' => $aula->receitas[$i]->pivot['quantidade_receita']]);
+                    ['id_receita' => $aula->receitas[$i]->pivot['id_receita'],
+                        'quantidade_receita' => $aula->receitas[$i]->pivot['quantidade_receita']]);
             }
-            
+
             return response()->json(['data' => $new_aula], 200);
-            } catch (\Exception $e) {
-                return response()->json('Ocorreu um erro no servidor.', 500);
-            }        
+        } catch (\Exception $e) {
+            return response()->json('Ocorreu um erro no servidor.', 500);
+        }
     }
 }
