@@ -15,7 +15,7 @@
 //     return $request->user();
 // });
 # Rota de registrar usuario
-Route::post('/cadastro','UserController@registrar');
+Route::post('/cadastro', 'UserController@registrar');
 
 Route::group(['middleware' => ['auth:api']], function () {
     # ingredientes
@@ -64,8 +64,10 @@ Route::group(['middleware' => ['auth:api']], function () {
 
     # periodo
     Route::get('/periodos', 'PeriodoController@index')->middleware('scope:administrador');;
-  
-      # motivo de retirada
-    Route::get('motivo_retiradas', 'MotivoRetiradaController@index')->middleware('scope:administrador,usuario');
-});
 
+    # motivo de retirada
+    Route::get('motivo_retiradas', 'MotivoRetiradaController@index')->middleware('scope:administrador,usuario');
+
+    # rota para verificar se token é valido
+    Route::get('/verificatoken', 'UserController@verificaToken')->middleware('scope:administrador,usuario');
+});

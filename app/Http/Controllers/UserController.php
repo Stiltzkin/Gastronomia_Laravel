@@ -2,20 +2,27 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\User;
+use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
     // Método para registrar usuarios
-    public function registrar(Request $request){
+    public function registrar(Request $request)
+    {
         $dados = $request->all();
-        if (!User::where('email', $dados['email'])->count()) {
+        if (!User::where('name', $dados['name'])->count()) {
             $dados['password'] = bcrypt($dados['password']);
             $user = User::create($dados);
-            return response()->json(['data'=>$user], 201);
+            return response()->json(['data' => $user], 201);
         } else {
-            return response()->json(['message'=>'Este e-mail já está cadastrado'], 400);
+            return response()->json(['message' => 'Este usuário já está cadastrado'], 400);
         }
+    }
+
+    // Apenas para o frontend verificar se o token é valido
+    public function verificaToken()
+    {
+        return response()->json(['message' => 'Token valido.']);
     }
 }
