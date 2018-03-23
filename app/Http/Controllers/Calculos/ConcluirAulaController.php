@@ -8,11 +8,6 @@ use Illuminate\Http\Request;
 
 class ConcluirAulaController extends CalculosAulaController
 {
-    public function __construct()
-    {
-        header('Access-Control-Allow-Origin: *');
-    }
-
     public function concluirAula(Request $request, $id)
     {
         try {

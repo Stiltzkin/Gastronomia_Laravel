@@ -8,11 +8,6 @@ use Illuminate\Pagination\Paginator;
 
 class AulaController extends Extend\PaginateController
 {
-    public function __construct()
-    {
-        header('Access-Control-Allow-Origin: *');
-    }
-
     /**
      * Display a listing of the resource.
      *

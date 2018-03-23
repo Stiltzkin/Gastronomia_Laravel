@@ -7,11 +7,6 @@ use App\Http\Controllers\Extend\CalculosAulaController;
 
 class DesagendarAulaController extends CalculosAulaController
 {
-    public function __construct()
-    {
-        header('Access-Control-Allow-Origin: *');
-    }
-
     public function desagendarAula($id)
     {
         try {

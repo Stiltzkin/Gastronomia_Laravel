@@ -8,16 +8,19 @@ use Illuminate\Pagination\Paginator;
 
 class ReceitaController extends Extend\PaginateController
 {
-    public function __construct()
-    {
-        header('Access-Control-Allow-Origin: *');
-    }
-
     public function listAll()
     {
         $receita = Receita::all();
 
-        return response()->json(['data' => $receita]);
+        $receitaArray = [];
+        for ($i = 0; $i < count($receita); $i++) {
+            $receitaFind = Receita::find($receita[$i]['id_receita']);
+            $receitaPivot = Receita::find($receita[$i]['id_receita'])->ingredientes;
+            $receitaFind['pivot'] = $receitaPivot;
+            array_push($receitaArray, $receitaFind);
+        }
+
+        return response()->json(['data' => $receitaArray]);
     }
     /**
      * Display a listing of the resource.
@@ -49,9 +52,9 @@ class ReceitaController extends Extend\PaginateController
             $receita = $receita->appends(Request::capture()->except('page'));
         }
         if ($qtd == null && $page !== null || $qtd !== null && $page == null) {
-            return response()->json(["message" => "Comando inválido."], 400);
+            return response()->json(["message" => "Comando inválido."]);
         }
-        return response()->json(['data' => $receita], 200);
+        return response()->json(['data' => $receita]);
 
     }
 
@@ -73,15 +76,15 @@ class ReceitaController extends Extend\PaginateController
 
                 if ($receita) {
                     $receita->ingredientes()->sync((array) $request->ingredientes);
-                    return response()->json(['data' => $receita], 201);
+                    return response()->json(['data' => $receita]);
                 } else {
-                    return response()->json(['message' => 'Dados inválidos.'], 400);
+                    return response()->json(['message' => 'Dados inválidos.']);
                 }
             } else {
-                return response()->json(['data' => $erros], 400);
+                return response()->json(['data' => $erros]);
             }
         } catch (\Exception $e) {
-            return response()->json('Erro no servidor.', 500);
+            return response()->json('Erro no servidor.');
         }
     }
 
@@ -95,7 +98,7 @@ class ReceitaController extends Extend\PaginateController
     {
         try {
             if ($id < 0) {
-                return response()->json(['message' => 'ID menor que zero, por favor, informe um ID válido.'], 400);
+                return response()->json(['message' => 'ID menor que zero, por favor, informe um ID válido.']);
             }
 
             $receita = Receita::find($id);
@@ -104,12 +107,12 @@ class ReceitaController extends Extend\PaginateController
             $receita['pivot'] = $receitaPivot;
 
             if ($receita) {
-                return response()->json(['data' => $receita], 200);
+                return response()->json(['data' => $receita]);
             } else {
-                return response()->json(['message' => 'Receita não encontrado.'], 404);
+                return response()->json(['message' => 'Receita não encontrado.']);
             }
         } catch (\Exception $e) {
-            return response()->json('Erro no servidor.', 500);
+            return response()->json('Erro no servidor.');
         }
     }
 
@@ -124,7 +127,7 @@ class ReceitaController extends Extend\PaginateController
     {
         try {
             if ($id < 0) {
-                return response()->json(['message' => 'ID menor que zero, por favor, informe um ID válido.'], 400);
+                return response()->json(['message' => 'ID menor que zero, por favor, informe um ID válido.']);
             }
             $receita = Receita::find($id);
             $dados = $request->all();
@@ -142,11 +145,11 @@ class ReceitaController extends Extend\PaginateController
                             'quantidade_bruta_receita_ingrediente' => $request->ingredientes[$i]['quantidade_bruta_receita_ingrediente']]);
                 }
             } else {
-                return response()->json(['message' => 'Receita não encontrado.'], 404);
+                return response()->json(['message' => 'Receita não encontrado.']);
             }
             return response()->json(['data' => $dados]);
         } catch (\Exception $e) {
-            return response()->json('Erro no servidor.', 500);
+            return response()->json('Erro no servidor.');
         }
     }
 
@@ -160,19 +163,19 @@ class ReceitaController extends Extend\PaginateController
     {
         try {
             if ($id < 0) {
-                return response()->json(['message' => 'ID menor que zero, por favor, informe um ID válido.'], 400);
+                return response()->json(['message' => 'ID menor que zero, por favor, informe um ID válido.']);
             }
 
             $receita = Receita::find($id);
 
             if ($receita) {
                 $receita->delete();
-                return response()->json(['data' => $receita->nome_receita . ' deletado com sucesso.', 'status' => true], 200);
+                return response()->json(['data' => $receita->nome_receita . ' deletado com sucesso.', 'status' => true]);
             } else {
-                return response()->json(['message' => 'Receita não encontrado.', 'status' => false], 404);
+                return response()->json(['message' => 'Receita não encontrado.', 'status' => false]);
             }
         } catch (\Exception $e) {
-            return response()->json('Erro no servidor.', 500);
+            return response()->json('Erro no servidor.');
         }
     }
 

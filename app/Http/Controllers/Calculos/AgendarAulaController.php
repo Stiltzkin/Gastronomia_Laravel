@@ -9,11 +9,6 @@ use Illuminate\Http\Request;
 
 class AgendarAulaController extends CalculosAulaController
 {
-    public function __construct()
-    {
-        header('Access-Control-Allow-Origin: *');
-    }
-
     public function agendarAula(Request $request, $id)
     {
         try {

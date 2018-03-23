@@ -15,7 +15,6 @@ class AlterTableUser extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->string('scope');
-            $table->dropColumn('email');
         });
     }
 
@@ -28,7 +27,6 @@ class AlterTableUser extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->dropColumn('scope');
-            $table->string('email')->unique();
         });
     }
 }
