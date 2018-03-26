@@ -26,7 +26,6 @@ class CategoriaController extends Controller
      */
     public function store(Request $request)
     {
-        try {
             $dados = $request->all();
 
             // $erros = $this->validacoes($erros);
@@ -37,14 +36,12 @@ class CategoriaController extends Controller
                 if ($categoria) {
                     return response()->json(['message' => $categoria->descricao_categoria . " criado com sucesso!"]);
                 } else {
-                    return response()->json(['message' => 'Dados inválidos.']);
+                    return response()->json(['message' => 'Dados inválidos.'],400);
                 }
             } else {
-                return response()->json(['message' => $erros]);
+                return response()->json(['message' => $erros],400);
             }
-        } catch (\Exception $e) {
-            return response()->json('Ocorreu um erro no servidor.');
-        }
+       
     }
 
     /**
@@ -55,9 +52,8 @@ class CategoriaController extends Controller
      */
     public function show($id)
     {
-        try {
             if ($id < 0) {
-                return response()->json(['message' => 'ID menor que zero, por favor, informe um ID válido.']);
+                return response()->json(['message' => 'ID menor que zero, por favor, informe um ID válido.'],400);
             }
 
             $categoria = Categoria::find($id);
@@ -65,11 +61,9 @@ class CategoriaController extends Controller
             if ($categoria) {
                 return response()->json(['data' => $categoria]);
             } else {
-                return response()->json(['message' => 'Categoria não existe.']);
+                return response()->json(['message' => 'Categoria não existe.'],404);
             }
-        } catch (\Exception $e) {
-            return response()->json('Ocorreu um erro no servidor.');
-        }
+        
     }
 
     /**
@@ -81,9 +75,8 @@ class CategoriaController extends Controller
      */
     public function update(Request $request, $id)
     {
-        try {
             if ($id < 0) {
-                return response()->json(['message' => 'ID menor que zero, por favor, informe um ID válido.']);
+                return response()->json(['message' => 'ID menor que zero, por favor, informe um ID válido.'],400);
             }
 
             $dados = $request()->all();
@@ -96,14 +89,12 @@ class CategoriaController extends Controller
                     $categoria->update($dados);
                     return response()->json(['message' => $categoria->descricao_categoria . " editado com sucesso!"]);
                 } else {
-                    return response()->json(['message' => 'Categoria não existe.']);
+                    return response()->json(['message' => 'Categoria não existe.'],404);
                 }
             } else {
-                return response()->json(['message' => $erros]);
+                return response()->json(['message' => $erros],400);
             }
-        } catch (\Exception $e) {
-            return response()->json('Ocorreu um erro no servidor.');
-        }
+       
     }
 
     /**
@@ -114,9 +105,8 @@ class CategoriaController extends Controller
      */
     public function destroy($id)
     {
-        try {
             if ($id < 0) {
-                return response()->json(['message' => 'ID menor que zero, por favor, informe um ID válido.']);
+                return response()->json(['message' => 'ID menor que zero, por favor, informe um ID válido.'],400);
             }
 
             $categoria = Categoria::find($id);
@@ -125,11 +115,9 @@ class CategoriaController extends Controller
                 $categoria->delete();
                 return response()->json(['message' => $categoria->descricao_categoria . " deletado com sucesso!"]);
             } else {
-                return response()->json(['message' => 'Categoria não existe.']);
+                return response()->json(['message' => 'Categoria não existe.'],404);
             }
-        } catch (\Exception $e) {
-            return response()->json('Ocorreu um erro no servidor.');
-        }
+        
     }
 
     public function validacoes($dados)

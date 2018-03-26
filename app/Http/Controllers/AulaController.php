@@ -39,7 +39,7 @@ class AulaController extends Extend\PaginateController
                 $aula = $aula->appends(Request::capture()->except('page'));
             }
             if ($qtd == null && $page !== null || $qtd !== null && $page == null) {
-                return response()->json(["message" => "Comando inválido."]);
+                return response()->json(["message" => "Comando inválido."],400);
             }
             return response()->json(['data' => $aula]);
         } catch (\Exception $e) {
@@ -55,7 +55,6 @@ class AulaController extends Extend\PaginateController
      */
     public function store(Request $request)
     {
-        try {
             $dados = $request->all();
 
             $aula = Aula::create($dados);
@@ -64,11 +63,9 @@ class AulaController extends Extend\PaginateController
                 $aula->receitas()->sync((array) $request->receitas);
                 return response()->json(['message' => $aula->nome_aula . " criado com sucesso!"]);
             } else {
-                return response()->json(['message' => 'Dados inválidos.']);
+                return response()->json(['message' => 'Dados inválidos.'],400);
             }
-        } catch (\Exception $e) {
-            return response()->json('Ocorreu um erro no servidor.');
-        }
+        
     }
 
     /**
@@ -79,9 +76,8 @@ class AulaController extends Extend\PaginateController
      */
     public function show($id)
     {
-        try {
             if ($id < 0) {
-                return response()->json(['message' => 'ID menor que zero, por favor, informe um ID válido.']);
+                return response()->json(['message' => 'ID menor que zero, por favor, informe um ID válido.'],400);
             }
 
             $aula = Aula::find($id);
@@ -89,11 +85,9 @@ class AulaController extends Extend\PaginateController
             if ($aula) {
                 return response()->json(['data' => $aula]);
             } else {
-                return response()->json(['message' => 'Aula não existe.']);
+                return response()->json(['message' => 'Aula não existe.'],404);
             }
-        } catch (\Exception $e) {
-            return response()->json('Ocorreu um erro no servidor.');
-        }
+       
     }
 
     /**
@@ -105,9 +99,8 @@ class AulaController extends Extend\PaginateController
      */
     public function update(Request $request, $id)
     {
-        try {
             if ($id < 0) {
-                return response()->json(['message' => 'ID menor que zero, por favor, informe um ID válido.']);
+                return response()->json(['message' => 'ID menor que zero, por favor, informe um ID válido.'],400);
             }
 
             $dados = $request->all();
@@ -128,11 +121,9 @@ class AulaController extends Extend\PaginateController
 
                 return response()->json(['message' => $aula->nome_aula . " editado com sucesso!"]);
             } else {
-                return response()->json(['message' => 'Aula não encontrada.']);
+                return response()->json(['message' => 'Aula não encontrada.'],404);
             }
-        } catch (\Exception $e) {
-            return response()->json('Ocorreu um erro no servidor.');
-        }
+        
     }
 
     /**
@@ -143,9 +134,8 @@ class AulaController extends Extend\PaginateController
      */
     public function destroy($id)
     {
-        try {
             if ($id < 0) {
-                return response()->json(['message' => 'ID menor que zero, por favor, informe um ID válido.']);
+                return response()->json(['message' => 'ID menor que zero, por favor, informe um ID válido.'],400);
             }
 
             $aula = Aula::find($id);
@@ -156,19 +146,16 @@ class AulaController extends Extend\PaginateController
                     $aula->delete();
                     return response()->json(['message' => 'Aula deletada com sucesso.']);
                 } else {
-                    return response()->json(['message' => 'Aula não encontrada.']);
+                    return response()->json(['message' => 'Aula não encontrada.'],404);
                 }
             }
-        } catch (\Exception $e) {
-            return response()->json('Ocorreu um erro no servidor.');
-        }
+       
     }
 
     public function clonarAula($id)
     {
-        try {
             if ($id < 0) {
-                return response()->json(['message' => 'ID menor que zero, por favor, informe um ID válido.']);
+                return response()->json(['message' => 'ID menor que zero, por favor, informe um ID válido.'],400);
             }
             $aula = Aula::find($id);
             $aula->load('receitas');
@@ -187,8 +174,6 @@ class AulaController extends Extend\PaginateController
             }
 
             return response()->json(['message' => $new_aula->nome_aula . " clonado com sucesso!"]);
-        } catch (\Exception $e) {
-            return response()->json('Ocorreu um erro no servidor.');
-        }
+        
     }
 }

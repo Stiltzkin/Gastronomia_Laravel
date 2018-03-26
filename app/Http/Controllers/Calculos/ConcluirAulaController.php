@@ -15,10 +15,10 @@ class ConcluirAulaController extends CalculosAulaController
 
         if ($aula) {
             if ($aula['aula_concluida'] == true) {
-                return response()->json(['message' => "Aula já está concluida."]);
+                return response()->json(['message' => "Aula já está concluida."], 400);
             }
         } else {
-            return response()->json(['message' => "Aula não existe."]);
+            return response()->json(['message' => "Aula não existe."], 404);
         }
 
         # localizado em Calculos/Extend/CalculosAulaController
@@ -53,10 +53,10 @@ class ConcluirAulaController extends CalculosAulaController
 
                 return response()->json(['message' => "Aula concluida com sucesso."]);
             } else {
-                return response()->json(['message' => 'Aula não existe.']);
+                return response()->json(['message' => 'Aula não existe.'], 404);
             }
         } else {
-            return response()->json(['message' => $erros]);
+            return response()->json(['message' => $erros], 400);
         }
     }
 

@@ -26,7 +26,6 @@ class ClassificacaoController extends Controller
      */
     public function store(Request $request)
     {
-        try {
             $dados = $request->all();
 
             if (empty($erros)) {
@@ -34,14 +33,12 @@ class ClassificacaoController extends Controller
                 if ($classificacao) {
                     return response()->json(['message' => $classificacao->descricao_classificacao . " criado com sucesso!"]);
                 } else {
-                    return response()->json(['message' => 'Dados inválidos.']);
+                    return response()->json(['message' => 'Dados inválidos.'],400);
                 }
             } else {
-                return response()->json(['data' => $erros]);
+                return response()->json(['data' => $erros],400);
             }
-        } catch (\Exception $e) {
-            return response()->json('Ocorreu um erro no servidor.');
-        }
+       
     }
 
     /**
@@ -52,9 +49,8 @@ class ClassificacaoController extends Controller
      */
     public function show($id)
     {
-        try {
             if ($id < 0) {
-                return response()->json(['message' => 'ID menor que zero, por favor, informe um ID válido.']);
+                return response()->json(['message' => 'ID menor que zero, por favor, informe um ID válido.'],400);
             }
 
             $classificacao = Classificacao::find($id);
@@ -62,11 +58,9 @@ class ClassificacaoController extends Controller
             if ($classificacao) {
                 return response()->json(['data' => $classificacao]);
             } else {
-                return response()->json(['message' => 'Classificação não existe.']);
+                return response()->json(['message' => 'Classificação não existe.'],404);
             }
-        } catch (\Exception $e) {
-            return response()->json('Ocorreu um erro no servidor');
-        }
+       
     }
 
     /**
@@ -78,9 +72,8 @@ class ClassificacaoController extends Controller
      */
     public function update(Request $request, $id)
     {
-        try {
             if ($id < 0) {
-                return response()->json(['data' => 'ID menor que zero, por favor, informe um ID válido.']);
+                return response()->json(['data' => 'ID menor que zero, por favor, informe um ID válido.'],400);
             }
 
             $dados = $request->all();
@@ -93,14 +86,12 @@ class ClassificacaoController extends Controller
                     $classificacao = update($dados);
                     return response()->json(['message' => $classificacao->descricao_classificacao . " editado com sucesso!"]);
                 } else {
-                    return response()->json(['message' => 'Classificação não encontrada.']);
+                    return response()->json(['message' => 'Classificação não encontrada.'],404);
                 }
             } else {
-                return response()->json(['data' => $erros]);
+                return response()->json(['data' => $erros],400);
             }
-        } catch (\Exception $e) {
-            return response()->json('Ocorreu um erro no servidor.');
-        }
+        
     }
 
     /**
@@ -111,9 +102,8 @@ class ClassificacaoController extends Controller
      */
     public function destroy($id)
     {
-        try {
             if ($id < 0) {
-                return response()->json(['message' => 'ID menor que zero, por favor, informe um ID válido.']);
+                return response()->json(['message' => 'ID menor que zero, por favor, informe um ID válido.'],400);
             }
 
             $classificacao = Classificacao::find($id);
@@ -122,11 +112,8 @@ class ClassificacaoController extends Controller
                 $classificacao->delete();
                 return response()->json(['data' => $classificacao->descricao_classificacao . " deletado com sucesso!"]);
             } else {
-                return response()->json(['message' => 'Classificação não encontrada.']);
-            }
-        } catch (\Exception $e) {
-            return response()->json('Ocorreu um erro no servidor');
-        }
+                return response()->json(['message' => 'Classificação não encontrada.'],404);
+            }        
     }
 
     public function validacoes($dados)
