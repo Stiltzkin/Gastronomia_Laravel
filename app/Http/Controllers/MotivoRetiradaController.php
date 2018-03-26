@@ -6,11 +6,6 @@ use App\MotivoRetirada;
 
 class MotivoRetiradaController extends Controller
 {
-    public function __construct()
-    {
-        header('Access-Control-Allow-Origin: *');
-    }
-
     public function index()
     {
         $motivo = MotivoRetirada::all();

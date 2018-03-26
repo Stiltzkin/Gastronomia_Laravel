@@ -9,16 +9,11 @@ use Illuminate\Http\Request;
 
 class IngredienteController extends Controller
 {
-    public function __construct()
-    {
-        header('Access-Control-Allow-Origin: *');
-    }
-
     public function soma(Request $request, $id)
     {
         try {
             if ($id < 0) {
-                return response()->json(['data' => 'ID menor que zero, por favor, informe um ID válido.'], 400);
+                return response()->json(['message' => 'ID menor que zero, por favor, informe um ID válido.']);
             }
 
             $dados = $request->only(['quantidade_estoque_ingrediente', 'valor_ingrediente']);
@@ -35,15 +30,15 @@ class IngredienteController extends Controller
                     $dados['quantidade_estoque_ingrediente'] = $estoqueTotal;
 
                     $ingrediente->update($dados);
-                    return response()->json(['data' => $ingrediente], 204);
+                    return response()->json(['message' => "Ingrediente acrescentado com sucesso!"]);
                 } else {
-                    return response()->json(['data' => $erros], 400);
+                    return response()->json(['message' => $erros]);
                 }
             } else {
-                return response()->json(['message' => 'Ingrediente não existe.'], 404);
+                return response()->json(['message' => 'Ingrediente não existe.']);
             }
         } catch (\Exception $e) {
-            return response()->json('Ocorreu um erro no servidor.', 500);
+            return response()->json('Ocorreu um erro no servidor.');
         }
     }
 
@@ -51,7 +46,7 @@ class IngredienteController extends Controller
     {
         try {
             if ($id < 0) {
-                return response()->json(['data' => 'ID menor que zero, por favor, informe um ID válido.'], 400);
+                return response()->json(['message' => 'ID menor que zero, por favor, informe um ID válido.']);
             }
 
             $dados = $request->only(['quantidade_estoque_ingrediente']);
@@ -66,10 +61,10 @@ class IngredienteController extends Controller
 
                     $dados['quantidade_estoque_ingrediente'] = $estoqueTotal;
                 } else {
-                    return response()->json(['message' => "Dados inválidos."], 400);
+                    return response()->json(['message' => "Dados inválidos."]);
                 }
             } else {
-                return response()->json(['message' => "Ingrediente não existe."], 404);
+                return response()->json(['message' => "Ingrediente não existe."]);
             }
 
             # validacao
@@ -84,12 +79,12 @@ class IngredienteController extends Controller
                 $ingrediente->update($dados);
                 MotivoRetirada::create($dadosMotivo);
 
-                return response()->json(['data' => $dados, 'motivo_retirada' => $dadosMotivo], 204);
+                return response()->json(['message' => "Ingrediente subtraido com sucesso!", 'motivo_retirada' => $dadosMotivo]);
             } else {
-                return response()->json(['data' => $erros], 400);
+                return response()->json(['message' => $erros]);
             }
         } catch (\Exception $e) {
-            return response()->json('Ocorreu um erro no servidor.', 500);
+            return response()->json('Ocorreu um erro no servidor.');
         }
     }
 

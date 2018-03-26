@@ -7,10 +7,6 @@ use Illuminate\Http\Request;
 
 class ClassificacaoController extends Controller
 {
-    public function __construct()
-    {
-        header('Access-Control-Allow-Origin: *');
-    }
     /**
      * Display a listing of the resource.
      *
@@ -36,15 +32,15 @@ class ClassificacaoController extends Controller
             if (empty($erros)) {
                 $classificacao = Classificacao::create($dados);
                 if ($classificacao) {
-                    return response()->json(['data' => $classificacao], 201);
+                    return response()->json(['message' => $classificacao->descricao_classificacao . " criado com sucesso!"]);
                 } else {
-                    return response()->json(['message' => 'Dados inválidos.'], 400);
+                    return response()->json(['message' => 'Dados inválidos.']);
                 }
             } else {
-                return response()->json(['data' => $erros], 400);
+                return response()->json(['data' => $erros]);
             }
         } catch (\Exception $e) {
-            return response()->json('Ocorreu um erro no servidor.', 500);
+            return response()->json('Ocorreu um erro no servidor.');
         }
     }
 
@@ -58,18 +54,18 @@ class ClassificacaoController extends Controller
     {
         try {
             if ($id < 0) {
-                return response()->json(['message' => 'ID menor que zero, por favor, informe um ID válido.'], 400);
+                return response()->json(['message' => 'ID menor que zero, por favor, informe um ID válido.']);
             }
 
             $classificacao = Classificacao::find($id);
 
             if ($classificacao) {
-                return response()->json(['data' => $classificacao], 200);
+                return response()->json(['data' => $classificacao]);
             } else {
-                return response()->json(['message' => 'Classificação não existe.'], 404);
+                return response()->json(['message' => 'Classificação não existe.']);
             }
         } catch (\Exception $e) {
-            return response()->json('Ocorreu um erro no servidor', 500);
+            return response()->json('Ocorreu um erro no servidor');
         }
     }
 
@@ -84,7 +80,7 @@ class ClassificacaoController extends Controller
     {
         try {
             if ($id < 0) {
-                return response()->json(['data' => 'ID menor que zero, por favor, informe um ID válido.'], 400);
+                return response()->json(['data' => 'ID menor que zero, por favor, informe um ID válido.']);
             }
 
             $dados = $request->all();
@@ -95,15 +91,15 @@ class ClassificacaoController extends Controller
             if (empty($erros)) {
                 if ($classificacao) {
                     $classificacao = update($dados);
-                    return response()->json(['data' => $classificacao], 204);
+                    return response()->json(['message' => $classificacao->descricao_classificacao . " editado com sucesso!"]);
                 } else {
-                    return response()->json(['message' => 'Classificação não encontrada.'], 404);
+                    return response()->json(['message' => 'Classificação não encontrada.']);
                 }
             } else {
-                return response()->json(['data' => $erros], 400);
+                return response()->json(['data' => $erros]);
             }
         } catch (\Exception $e) {
-            return response()->json('Ocorreu um erro no servidor.', 500);
+            return response()->json('Ocorreu um erro no servidor.');
         }
     }
 
@@ -117,19 +113,19 @@ class ClassificacaoController extends Controller
     {
         try {
             if ($id < 0) {
-                return response()->json(['message' => 'ID menor que zero, por favor, informe um ID válido.'], 400);
+                return response()->json(['message' => 'ID menor que zero, por favor, informe um ID válido.']);
             }
 
             $classificacao = Classificacao::find($id);
 
             if ($classificacao) {
                 $classificacao->delete();
-                return response()->json(['data' => $classificacao], 200);
+                return response()->json(['data' => $classificacao->descricao_classificacao . " deletado com sucesso!"]);
             } else {
-                return response()->json(['message' => 'Classificação não encontrada.'], 404);
+                return response()->json(['message' => 'Classificação não encontrada.']);
             }
         } catch (\Exception $e) {
-            return response()->json('Ocorreu um erro no servidor', 500);
+            return response()->json('Ocorreu um erro no servidor');
         }
     }
 
