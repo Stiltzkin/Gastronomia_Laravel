@@ -76,7 +76,7 @@ class ReceitaController extends Extend\PaginateController
 
                 if ($receita) {
                     $receita->ingredientes()->sync((array) $request->ingredientes);
-                    return response()->json(['data' => $receita]);
+                    return response()->json(['message' => $receita->nome_receita . " criado com sucesso!"]);
                 } else {
                     return response()->json(['message' => 'Dados inválidos.']);
                 }
@@ -147,7 +147,7 @@ class ReceitaController extends Extend\PaginateController
             } else {
                 return response()->json(['message' => 'Receita não encontrado.']);
             }
-            return response()->json(['data' => $dados]);
+            return response()->json(['data' => $receita->nome_receita . " editado com sucesso!"]);
         } catch (\Exception $e) {
             return response()->json('Erro no servidor.');
         }
@@ -170,7 +170,7 @@ class ReceitaController extends Extend\PaginateController
 
             if ($receita) {
                 $receita->delete();
-                return response()->json(['data' => $receita->nome_receita . ' deletado com sucesso.', 'status' => true]);
+                return response()->json(['message' => $receita->nome_receita . ' deletado com sucesso.', 'status' => true]);
             } else {
                 return response()->json(['message' => 'Receita não encontrado.', 'status' => false]);
             }
@@ -193,22 +193,22 @@ class ReceitaController extends Extend\PaginateController
         return $erros;
     }
 
-    public function imageUpload($request, $dados)
-    {
-        $data['image'] = $dados->image;
+    // public function imageUpload($request, $dados)
+    // {
+    //     $data['image'] = $dados->image;
 
-        if ($request->hasFile('image') && $request->file('image')->isValid()) {
-            if ($dados->image) {
-                $name = $dados->image;
-            } else {
-                $name = $dados->id_receita . kebab_case($dados->nome_receita);
-            }
+    //     if ($request->hasFile('image') && $request->file('image')->isValid()) {
+    //         if ($dados->image) {
+    //             $name = $dados->image;
+    //         } else {
+    //             $name = $dados->id_receita . kebab_case($dados->nome_receita);
+    //         }
 
-            $entension = $request->image->extension();
-            $fileName = "{$name}.{$extension}";
+    //         $entension = $request->image->extension();
+    //         $fileName = "{$name}.{$extension}";
 
-            $data['image'] = $fileName;
-            $upload = $request->image->storeAs('dados', $fileName);
-        }
-    }
+    //         $data['image'] = $fileName;
+    //         $upload = $request->image->storeAs('dados', $fileName);
+    //     }
+    // }
 }

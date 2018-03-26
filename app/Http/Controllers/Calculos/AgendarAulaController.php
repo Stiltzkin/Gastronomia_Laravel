@@ -13,7 +13,7 @@ class AgendarAulaController extends CalculosAulaController
     {
         try {
             if ($id < 0) {
-                return response()->json(['message' => 'ID menor que zero, por favor, informe um ID válido.'], 400);
+                return response()->json(['message' => 'ID menor que zero, por favor, informe um ID válido.']);
             }
 
             $dados = $request->all();
@@ -23,10 +23,10 @@ class AgendarAulaController extends CalculosAulaController
             # o usuario tem opcao de alterar valores no ultimo momento -.-
             if ($aula) {
                 if ($aula['aula_agendada'] == true) {
-                    return response()->json(['message' => "Aula já está agendada."], 400);
+                    return response()->json(['message' => "Aula já está agendada."]);
                 }
             } else {
-                return response()->json(['message' => "Aula não existe."], 404);
+                return response()->json(['message' => "Aula não existe."]);
             }
 
             $dados = $request->all();
@@ -47,16 +47,16 @@ class AgendarAulaController extends CalculosAulaController
                 # começa o agendamento
 
             } else {
-                return response()->json(['message' => 'Aula não encontrada.'], 404);
+                return response()->json(['message' => 'Aula não encontrada.']);
             }
         } catch (\Exception $e) {
-            return response()->json('Ocorreu um erro no servidor ao dar update.', 500);
+            return response()->json('Ocorreu um erro no servidor ao dar update.');
         }
 
         # começo do agendamento
         try {
             # localizado em Calculos/Extend/CalculosAulaController
-            $ing = $this->agendarConcluirAula($dados, $aula, $id);
+            $ing = $this->agendarConcluirAula($aula, $id);
             $ingredienteArray = $ing[0];
             $ingredientesReservadosTotal = $ing[1];
 
@@ -93,15 +93,15 @@ class AgendarAulaController extends CalculosAulaController
                         $ingrediente->update($reservadoTotalArray[$n]);
                     }
 
-                    return response()->json("Aula agendada com sucesso.", 204);
+                    return response()->json(['message' => "Aula agendada com sucesso."]);
                 } else {
-                    return response()->json(['message' => 'Aula não encontrada.'], 404);
+                    return response()->json(['message' => 'Aula não encontrada.']);
                 }
             } else {
-                return response()->json(['erros_aula' => $errosAula, 'erros_ingredientes' => $errosIngrediente], 400);
+                return response()->json(['message' => $errosAula, 'erros_ingredientes' => $errosIngrediente]);
             }
         } catch (\Exception $e) {
-            return response()->json('Ocorreu um erro no servidor.', 500);
+            return response()->json('Ocorreu um erro no servidor.');
         }
     }
 

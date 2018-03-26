@@ -11,17 +11,17 @@ class DesagendarAulaController extends CalculosAulaController
     {
         try {
             if ($id < 0) {
-                return response()->json(['message' => 'ID menor que zero, por favor, informe um ID válido.'], 400);
+                return response()->json(['message' => 'ID menor que zero, por favor, informe um ID válido.']);
             }
 
             $aula = Aula::find($id);
 
             if ($aula) {
                 if ($aula['aula_agendada'] == false) {
-                    return response()->json(['message' => "Aula ainda não está agendada."], 400);
+                    return response()->json(['message' => "Aula ainda não está agendada."]);
                 }
             } else {
-                return response()->json(['message' => "Aula não existe."], 404);
+                return response()->json(['message' => "Aula não existe."]);
             }
 
             # localizado em Extend/CalculosAulaController
@@ -49,12 +49,12 @@ class DesagendarAulaController extends CalculosAulaController
                     $ingrediente->update($calculadoArray[$n]);
                 }
 
-                return response()->json(['message' => "Aula desagendada com sucesso."], 204);
+                return response()->json(['message' => "Aula desagendada com sucesso."]);
             } else {
-                return response()->json(['message' => 'Aula não existe.'], 404);
+                return response()->json(['message' => 'Aula não existe.']);
             }
         } catch (\Exception $e) {
-            return response()->json('Ocorreu um erro no servidor.', 500);
+            return response()->json('Ocorreu um erro no servidor.');
         }
 
     }
