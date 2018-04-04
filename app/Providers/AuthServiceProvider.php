@@ -2,8 +2,7 @@
 
 namespace App\Providers;
 
-use Laravel\Passport\Passport;
-use Illuminate\Support\Facades\Gate;
+// use Laravel\Passport\Passport;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
 class AuthServiceProvider extends ServiceProvider
@@ -27,14 +26,14 @@ class AuthServiceProvider extends ServiceProvider
         $this->registerPolicies();
 
         //
-        Passport::routes();
+        // Passport::routes();
 
         // Tempo de duraçao do token de acesso
         //Passport::tokensExpireIn(Carbon::now()->addMinutes(10));
 
-        Passport::tokensCan([
-            'usuario' => 'Usuario comum',
-            'administrador' => 'Administrador do Sistema'
-        ]);
+        // Passport::tokensCan([
+        //     'usuario' => 'Usuario comum',
+        //     'administrador' => 'Administrador do Sistema'
+        // ]);
     }
 }
